@@ -1,0 +1,29 @@
+export interface RegisterDto {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  userAgent?: string;
+}
+
+export interface LoginDto {
+  email: string;
+  password?: string;
+  userAgent?: string;
+  providerId?: string;
+  provider?: string;
+  picture?: string;
+  displayName?: string;
+}
+
+export interface resetPasswordDto {
+  password: string;
+  verificationCode: string;
+}
+
+export interface AuthInfo {
+    message?: string;
+    mfaRequired?: boolean;
+    accessToken?: string;
+    refreshToken?: string;
+}

@@ -1,0 +1,42 @@
+{
+  "name": "crm",
+  "private": true,
+  "version": "1.0.0",
+  "description": "CRM APP",
+  "author": "zidan",
+  "license": "ISC",
+  "workspaces": [
+    "apps/*"
+  ],
+  "homepage": "",
+  "keywords": [
+    "crm",
+    "backend",
+    "frontend"
+  ],
+
+  "scripts": {
+    "test:backend": "npm run test:cov -w apps/backend",
+    "test:frontend": "npm run test -w apps/frontend",
+    "test": "concurrently --kill-others \"npm run test:backend\" \"npm run test:frontend\"",
+    "dev:backend": "npm run start:dev -w apps/backend",
+    "dev:frontend": "npm run dev -w apps/frontend",
+    "dev": "concurrently --kill-others \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:backend": "npm run build -w apps/backend",
+    "build:frontend": "npm run build -w apps/frontend",
+    "build": "npm run build -ws",
+    "start:backend": "npm run start -w apps/backend",
+    "start:frontend": "npm run preview -w apps/frontend",
+    "start": "concurrently --kill-others \"npm run start:backend\" \"npm run start:frontend\""
+  },
+  "bugs": {
+    "url": "https://github.com/clickagency"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clickagency"
+  },
+  "dependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
