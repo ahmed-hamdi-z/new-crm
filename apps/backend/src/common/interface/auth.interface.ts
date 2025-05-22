@@ -25,5 +25,5 @@ export interface AuthInfo {
     message?: string;
     mfaRequired?: boolean;
     accessToken?: string;
-    refreshToken?: string;
+    refreshToken?: string | undefined;
 }

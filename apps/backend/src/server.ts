@@ -12,6 +12,7 @@ import passport from "./middlewares/passport";
 import connectToDatabase from "./database/database";
 import { BadRequestException } from "./common/utils/catch-errors";
 import { ErrorCode } from "./common/enums/error-code.enum";
+import userRoutes from "./modules/user/user.route";
 // import mfaRoutes from "./modules/mfa/mfa.routes";
 
 
@@ -46,6 +47,8 @@ app.get(
 );
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
+
+app.use(`${BASE_PATH}/user`, userRoutes);
 
 // app.use(`${BASE_PATH}/mfa`, mfaRoutes);
 

@@ -5,7 +5,6 @@ import { HTTPSTATUS } from "../../config/http.config";
 
 import {
   emailSchema,
-  loginSchema,
   registerSchema,
   resetPasswordSchema,
   verificationEmailSchema,
@@ -18,13 +17,8 @@ import {
   setAuthenticationCookies,
 } from "../../common/utils/cookie";
 
-import {
-  BadRequestException,
-  NotFoundException,
-  UnauthorizedException,
-} from "../../common/utils/catch-errors";
+import { UnauthorizedException } from "../../common/utils/catch-errors";
 import { AuthInfo, LoginDto } from "common/interface/auth.interface";
-import { authService } from "./auth.module";
 import passport from "passport";
 import { config } from "../../config/app.config";
 
@@ -33,92 +27,90 @@ export class AuthController {
 
   constructor(authService: AuthService) {
     this.authService = authService;
-  } 
- 
-//   public googleCallback =  asyncHandler(
-//   async (req: Request, res: Response) => {
-//     const currentWorkspace = req.user?.currentWorkspace;
+  }
 
-//     if (!currentWorkspace) {
-//       return res.redirect(
-//         `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure`
-//       );
-//     }
+  //   public googleCallback =  asyncHandler(
+  //   async (req: Request, res: Response) => {
+  //     const currentWorkspace = req.user?.currentWorkspace;
 
-//     return res.redirect(
-//       `${config.FRONTEND_ORIGIN}/workspace/${currentWorkspace}`
-//     );
-//   }
-// );
+  //     if (!currentWorkspace) {
+  //       return res.redirect(
+  //         `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure`
+  //       );
+  //     }
+
+  //     return res.redirect(
+  //       `${config.FRONTEND_ORIGIN}/workspace/${currentWorkspace}`
+  //     );
+  //   }
+  // );
 
   public googleCallback = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate(
-      "google", // The name of the Google strategy
-      { session: false }, // Options: disable sessions
-      (err: Error | null, user: any, info: AuthInfo | undefined) => {
-        // This callback is executed after the Google strategy's verify function calls done()
-
-        // Handle errors passed from the strategy (authService errors)
-        if (err) {
-          console.error("Google Auth Error:", err);
-          // Redirect to a failure page on the frontend
-          return res.redirect(
-            `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure&message=${encodeURIComponent(err.message || "Authentication failed")}`
-          );
-        }
-
-        // Handle Authentication Failure (User not found or invalid credentials by strategy)
-        if (!user) {
-          console.warn("Google Auth Failed: User not found/created");
-          // Redirect to a failure page on the frontend
-          return res.redirect(
-            `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure&message=${encodeURIComponent(info?.message || "Authentication failed")}`
-          );
-        }
-
-        const { accessToken, refreshToken, mfaRequired } = info || {};
-        if (!accessToken || !refreshToken) {
-          console.error("Google Auth Error: Tokens not returned by service");
-          return res.redirect(
-            `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure&message=${encodeURIComponent("Failed to generate tokens")}`
-          );
-        }
-        
-
-        // Set the authentication cookies
-        setAuthenticationCookies({ res, accessToken, refreshToken });
-        console.log(`Cookies set for Google user: ${user._id}`);
-
-        // Handle MFA requirement or successful login redirect
-        if (mfaRequired) {
-          console.log(`MFA required for Google user: ${user._id}`);
-          return res.redirect(
-            `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=mfa_required&userId=${user._id}` // Example: Pass user ID
-          );
-        } else {
-          // @ts-ignore
-          const currentWorkspace = user?.currentWorkspace;
-
-          if (!currentWorkspace) {
-            console.error(
-              `Google Auth Error: No current workspace for user: ${user._id}`
-            );
-            // Redirect to a setup/onboarding page or failure
+      passport.authenticate(
+        "google", // The name of the Google strategy
+        { session: false }, // Options: disable sessions
+        (err: Error | null, user: any, info: AuthInfo | undefined) => {
+          // Handle errors passed from the strategy (authService errors)
+          if (err) {
+            console.error("Google Auth Error:", err);
+            // Redirect to a failure page on the frontend
             return res.redirect(
-              `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure&message=${encodeURIComponent("User has no current workspace")}`
+              `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure&message=${encodeURIComponent(err.message || "Authentication failed")}`
             );
           }
-          console.log(
-            `Google login successful, redirecting user ${user._id} to workspace ${currentWorkspace}`
-          );
-          return res.redirect(
-            `${config.FRONTEND_ORIGIN}/workspace/${currentWorkspace}`
-          );
+
+          // Handle Authentication Failure (User not found or invalid credentials by strategy)
+          if (!user) {
+            console.warn("Google Auth Failed: User not found/created");
+            // Redirect to a failure page on the frontend
+            return res.redirect(
+              `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure&message=${encodeURIComponent(info?.message || "Authentication failed")}`
+            );
+          }
+
+          const { accessToken, refreshToken, mfaRequired } = info || {};
+          if (!accessToken || !refreshToken) {
+            console.error("Google Auth Error: Tokens not returned by service");
+            return res.redirect(
+              `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure&message=${encodeURIComponent("Failed to generate tokens")}`
+            );
+          }
+
+          // Set the authentication cookies
+          setAuthenticationCookies({ res, accessToken, refreshToken });
+          console.log(`Cookies set for Google user: ${user._id}`);
+
+          // Handle MFA requirement or successful login redirect
+          if (mfaRequired) {
+            console.log(`MFA required for Google user: ${user._id}`);
+            return res.redirect(
+              `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=mfa_required&userId=${user._id}` // Example: Pass user ID
+            );
+          } else {
+            // @ts-ignore
+            const currentWorkspace = user?.currentWorkspace;
+
+            if (!currentWorkspace) {
+              console.error(
+                `Google Auth Error: No current workspace for user: ${user._id}`
+              );
+              // Redirect to a setup/onboarding page or failure
+              return res.redirect(
+                `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure&message=${encodeURIComponent("User has no current workspace")}`
+              );
+            }
+            console.log(
+              `Google login successful, redirecting user ${user._id} to workspace ${currentWorkspace}`
+            );
+            return res.redirect(
+              `${config.FRONTEND_ORIGIN}/workspace/${currentWorkspace}`
+            );
+          }
         }
-      }
-    )(req, res, next); // This line invokes the passport.authenticate middleware
-  })
+      )(req, res, next); // This line invokes the passport.authenticate middleware
+    }
+  );
 
   public register = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
@@ -139,12 +131,10 @@ export class AuthController {
     async (req: Request, res: Response, next: NextFunction) => {
       // Use passport.authenticate with the 'local' strategy and a custom callback.
       passport.authenticate(
-        "local", // The name of the strategy defined in passport-setup.ts
+        "local",
         { session: false }, // Options: disable sessions
         // Use AuthInfo type for info
         (err: Error | null, user: any, info: AuthInfo | undefined) => {
-          // This callback is executed after the strategy's verify function calls done()
-
           // Handle errors passed from the strategy (authService errors)
           if (err) {
             console.error("Local Login Error:", err);
@@ -161,7 +151,7 @@ export class AuthController {
           }
 
           const { accessToken, refreshToken, mfaRequired } = info || {};
-          // Handle case where tokens might be missing unexpectedly (shouldn't happen if service is correct)
+
           if (!accessToken || !refreshToken) {
             console.error(
               "Local Login Error: Tokens not returned by verifyUserService"
@@ -212,64 +202,64 @@ export class AuthController {
     });
   });
 
-    public refreshToken = asyncHandler(
-      async (req: Request, res: Response): Promise<any> => {
-        const refreshToken = req.cookies.refreshToken as string | undefined;
-        if (!refreshToken) {
-          throw new UnauthorizedException("Missing refresh token");
-        }
-
-        const { accessToken, newRefreshToken } =
-          await this.authService.refreshToken(refreshToken);
-
-        if (newRefreshToken) {
-          res.cookie(
-            "refreshToken",
-            newRefreshToken,
-            getRefreshTokenCookieOptions()
-          );
-        }
-
-        return res
-          .status(HTTPSTATUS.OK)
-          .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
-          .json({
-            message: "Refresh access token successfully",
-          });
+  public refreshToken = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const refreshToken = req.cookies.refreshToken as string | undefined;
+      if (!refreshToken) {
+        throw new UnauthorizedException("Missing refresh token");
       }
-    );
 
-    public verifyEmail = asyncHandler(
-      async (req: Request, res: Response): Promise<any> => {
-        const { code } = verificationEmailSchema.parse(req.body);
-        await this.authService.verifyEmail(code);
+      const { accessToken, newRefreshToken } =
+        await this.authService.refreshToken(refreshToken);
 
-        return res.status(HTTPSTATUS.OK).json({
-          message: "Email verified successfully",
+      if (newRefreshToken) {
+        res.cookie(
+          "refreshToken",
+          newRefreshToken,
+          getRefreshTokenCookieOptions()
+        );
+      }
+
+      return res
+        .status(HTTPSTATUS.OK)
+        .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
+        .json({
+          message: "Refresh access token successfully",
         });
-      }
-    );
+    }
+  );
 
-    public forgotPassword = asyncHandler(
-      async (req: Request, res: Response): Promise<any> => {
-        const email = emailSchema.parse(req.body.email);
-        await this.authService.forgotPassword(email);
+  public verifyEmail = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const { code } = verificationEmailSchema.parse(req.body);
+      await this.authService.verifyEmail(code);
 
-        return res.status(HTTPSTATUS.OK).json({
-          message: "Password reset email sent",
-        });
-      }
-    );
+      return res.status(HTTPSTATUS.OK).json({
+        message: "Email verified successfully",
+      });
+    }
+  );
 
-    public resetPassword = asyncHandler(
-      async (req: Request, res: Response): Promise<any> => {
-        const body = resetPasswordSchema.parse(req.body);
+  public forgotPassword = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const email = emailSchema.parse(req.body.email);
+      await this.authService.forgotPassword(email);
 
-        await this.authService.resePassword(body);
-        
-        return clearAuthenticationCookies(res).status(HTTPSTATUS.OK).json({
-          message: "Reset Password successfully",
-        });
-      }
-    );
+      return res.status(HTTPSTATUS.OK).json({
+        message: "Password reset email sent",
+      });
+    }
+  );
+
+  public resetPassword = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const body = resetPasswordSchema.parse(req.body);
+
+      await this.authService.resePassword(body);
+
+      return clearAuthenticationCookies(res).status(HTTPSTATUS.OK).json({
+        message: "Reset Password successfully",
+      });
+    }
+  );
 }
