@@ -10,7 +10,6 @@ export class UserService {
    * @throws NotFoundException if the user with the given ID is not found.
    */
   public async findUserById(userId: string): Promise<UserDocument> {
-    // Validate if userId is a valid MongoDB ObjectId before querying
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new NotFoundException(`Invalid user ID format: ${userId}`);
     }

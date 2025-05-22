@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { compareValue, hashValue } from "../../common/utils/bcrypt";
+import { compareValue } from "../../common/utils/bcrypt";
 
 // Interface for User Preferences
 interface UserPreferences {
@@ -29,7 +29,7 @@ export interface UserDocument extends Document {
   password?: string;
   profilePicture: string | null;
   isEmailVerified: boolean;
-  isActive: boolean;
+  isActive: boolean; 
   lastLogin: Date | null;
   createdAt: Date;
   updatedAt: Date;

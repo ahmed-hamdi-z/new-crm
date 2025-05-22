@@ -22,7 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-// Constants and typess
+// Constants and types
 import { appRoutes } from "@/constants/app-routes";
 import { loginSchema, LoginFormValues, AuthError } from "@/types/auth";
 

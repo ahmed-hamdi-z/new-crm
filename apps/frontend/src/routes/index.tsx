@@ -57,7 +57,11 @@ const router = createBrowserRouter([
     path: appRoutes.user.profileSettings,
   },
   {
-    element: <Dashboard />,
+    element: (
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
     path: appRoutes.dashboard.path,
     children: [
       // renders at "/dashboard"

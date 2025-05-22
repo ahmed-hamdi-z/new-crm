@@ -29,7 +29,7 @@ export const logoutApi = async () => API.get(apiRoutes.auth.logout);
  * @returns {Promise<any>} - The current user's data.
  */
 export const CurrentUser = async (data: any) =>
-  API.get(apiRoutes.user.current, data);
+  API.get(apiRoutes.user.current, {data});
 
 /**
  * Verifies the email address of a user.

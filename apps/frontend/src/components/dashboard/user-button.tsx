@@ -22,14 +22,14 @@ export const UserButton = () => {
       </div>
     );
   }
-
+ 
   if (!user) return null;
 
-  const { userName, email } = user;
-
-  const avatartFullback = userName
-    ? userName.charAt(0).toUpperCase()
-    : (email.charAt(0).toUpperCase() ?? "U");
+  const { name, email } = user;
+  
+  const avatartFullback = name
+    ? user.name.charAt(0).toUpperCase()
+    : (user.email.charAt(0).toUpperCase() ?? "U");
 
   return (
     <DropdownMenu modal={false}>
@@ -54,7 +54,7 @@ export const UserButton = () => {
           </Avatar>
           <div className="flex flex-col items-center justify-center">
             <p className="text-sm font-medium text-neutral-900">
-              {userName || "User"}
+              {name || "User"}
             </p>
             <p className="text-xs text-neutral-500">{email}</p>
           </div>

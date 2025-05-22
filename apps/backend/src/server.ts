@@ -50,6 +50,8 @@ app.use(`${BASE_PATH}/auth`, authRoutes);
 
 app.use(`${BASE_PATH}/user`, userRoutes);
 
+app.use(`${BASE_PATH}/workspace`, userRoutes);
+
 // app.use(`${BASE_PATH}/mfa`, mfaRoutes);
 
 // app.use(`${BASE_PATH}/session`, authenticateJWT, sessionRoutes);

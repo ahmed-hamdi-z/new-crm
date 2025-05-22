@@ -39,7 +39,7 @@ const apiRoutes = {
     create: "/create/workspace",
   },
   user: {
-    current: "/user",
+    current: "/api/user/current",
   },
 };
 
