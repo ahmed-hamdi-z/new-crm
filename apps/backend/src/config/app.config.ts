@@ -6,13 +6,11 @@ dotenv.config();
 
 const appConfig = () => ({
   NODE_ENV: getEnv("NODE_ENV", "development"),
-  
-  APP_ORIGIN: getEnv("APP_ORIGIN", "localhost"),
 
   PORT: getEnv("PORT", "5000"),
   BASE_PATH: getEnv("BASE_PATH", "/api"),
   MONGO_URI: getEnv("MONGO_URI", "MONGO_URI"),
-
+ 
   JWT: {
     SECRET: getEnv("JWT_SECRET"),
     EXPIRES_IN: getEnv("JWT_EXPIRES_IN", "15m"),
@@ -27,9 +25,9 @@ const appConfig = () => ({
   GOOGLE_CLIENT_SECRET: getEnv("GOOGLE_CLIENT_SECRET"),
   GOOGLE_CALLBACK_URL: getEnv("GOOGLE_CALLBACK_URL"),
 
-  MAILER_SENDER: getEnv("MAILER_SENDER"),
+  MAILER_SENDER: getEnv("MAILER_SENDER",  "onboarding@resend.dev"),
+  RESEND_API_KEY: getEnv("RESEND_API_KEY", "RESEND_API_KEY"),
 
-  RESEND_API_KEY: getEnv("RESEND_API_KEY"),
   FRONTEND_ORIGIN: getEnv("FRONTEND_ORIGIN", "localhost"),
   FRONTEND_GOOGLE_CALLBACK_URL: getEnv("FRONTEND_GOOGLE_CALLBACK_URL"),
 });

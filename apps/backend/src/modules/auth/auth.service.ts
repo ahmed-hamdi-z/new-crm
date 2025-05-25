@@ -85,6 +85,13 @@ export class AuthService {
         expiresAt: fortyFiveMinutesFromNow(),
       });
 
+      // Sending verification email link
+      const verificationUrl = `${config.FRONTEND_ORIGIN}/confirm-account?code=${verification.code}`;
+      await sendEmail({
+        to: newUser.email,
+        ...verifyEmailTemplate(verificationUrl),
+      });
+
       const account = new AccountModel({
         userId: userId,
         provider: ProviderEnum.EMAIL,
@@ -117,13 +124,6 @@ export class AuthService {
 
       newUser.currentWorkspace = workspace._id as mongoose.Types.ObjectId;
       await newUser.save();
-
-      // Sending verification email link
-      const verificationUrl = `${config.APP_ORIGIN}/confirm-account?code=${verification.code}`;
-      await sendEmail({
-        to: newUser.email,
-        ...verifyEmailTemplate(verificationUrl),
-      });
 
       await session.commitTransaction();
       logger.info(
@@ -439,7 +439,7 @@ export class AuthService {
       session.expiredAt = calculateExpirationDate(
         config.JWT.REFRESH_EXPIRES_IN
       );
-      await session.save();
+      await session.save(); 
     }
 
     const newRefreshToken = sessionRequireRefresh
@@ -528,7 +528,7 @@ export class AuthService {
       expiresAt,
     });
 
-    const resetLink = `${config.APP_ORIGIN}/reset-password?code=${
+    const resetLink = `${config.FRONTEND_ORIGIN}/reset-password?code=${
       validCode.code
     }&exp=${expiresAt.getTime()}`;
 
@@ -580,6 +580,6 @@ export class AuthService {
   }
 
   public async logout(sessionId: string) {
-    return await SessionModel.findByIdAndDelete(sessionId); 
+    return await SessionModel.findByIdAndDelete(sessionId);
   }
 }

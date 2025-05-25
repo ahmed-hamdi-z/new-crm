@@ -33,7 +33,7 @@ const apiRoutes = {
     resetPassword: "/auth/password/reset",
     forgotPassword: "/auth/password/forgot",
     sessions: "/sessions",
-    refresh: "/auth/refresh",
+    refresh: "/api/auth/refresh",
   },
   workspace: {
     create: "/create/workspace",

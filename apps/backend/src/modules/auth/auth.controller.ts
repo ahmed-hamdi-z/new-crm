@@ -245,7 +245,7 @@ export class AuthController {
       const email = emailSchema.parse(req.body.email);
       await this.authService.forgotPassword(email);
 
-      return res.status(HTTPSTATUS.OK).json({
+      return res.status(HTTPSTATUS.OK).json({ 
         message: "Password reset email sent",
       });
     }
