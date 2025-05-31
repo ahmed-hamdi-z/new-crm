@@ -35,7 +35,7 @@ export const signJwtToken = (
   options?: SignOptsAndSecret
 ) => {
   const { secret, ...opts } = options || accessTokenSignOptions;
-  return jwt.sign(payload, secret, {
+  return jwt.sign(payload, secret, { 
     ...defaults,
     ...opts,
   });

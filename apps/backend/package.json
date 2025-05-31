@@ -4,7 +4,7 @@
   "main": "src/server.ts",
   "scripts": {
     "seed": "ts-node src/seeders/role.seeder.ts",
-    "dev": "nodemon src/server.ts src/index.d.ts",
+    "dev": "nodemon src/server.ts src/types/index.d.ts",
     "build": "tsc && cp ./package.json ./dist",
     "start:dev": "nodemon src/server.ts --watch",
     "start": "node dist/server.js"
@@ -28,7 +28,9 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "qrcode": "^1.5.4",
     "resend": "^4.1.2",
+    "speakeasy": "^2.0.0",
     "uuid": "^11.1.0",
     "uuidv4": "^6.2.13",
     "winston": "^3.17.0",
@@ -57,6 +59,8 @@
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
+    "@types/qrcode": "^1.5.5",
+    "@types/speakeasy": "^2.0.10",
     "cloudinary": "^2.6.0",
     "multer": "^1.4.5-lts.2",
     "nodemon": "^3.1.9",

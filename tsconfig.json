@@ -9,5 +9,6 @@
     { "path": "./apps/frontend" },
     { "path": "./apps/backend" }
   ],
-  "exclude": ["node_modules", "dist", "build"]
+  "include": ["./apps/backend/src/**/*.ts", "@types"],
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }

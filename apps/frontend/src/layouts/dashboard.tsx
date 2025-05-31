@@ -39,7 +39,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
 
   return (
     <ThemeProvider>
-      {/* BEGIN MAIN CONTAINER */}
+      {/* BEGIN MAIN CONTAINER */} 
       <div className="relative">
         {/* sidebar menu overlay */}
         <div

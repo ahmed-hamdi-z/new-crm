@@ -15,14 +15,27 @@ export class UserService {
     }
 
     const user = await UserModel.findById(userId)
-      .populate("currentWorkspace") 
-      .select("-password") 
-      .lean(); 
-      
-    if (!user) {
+      .populate("currentWorkspace")
+      .select("-password")
+      .lean();
+
+    if (!user) { 
       throw new NotFoundException(`User with ID ${userId} not found.`);
     }
 
     return user as UserDocument;
+  }
+
+  public async findUserByEmail(email: string): Promise<UserDocument> {
+    const user = await UserModel.findOne({ email }).lean();
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found.`);
+    }
+    return user as UserDocument;
+  }
+
+  public async findUsers(): Promise<UserDocument[]> {
+    const users = await UserModel.find().lean();
+    return users as UserDocument[];
   }
 }

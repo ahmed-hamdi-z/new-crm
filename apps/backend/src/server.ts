@@ -4,16 +4,16 @@ import express, { NextFunction, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import { config } from "./config/app.config";
 import { errorHandler } from "./middlewares/errorHandler";
-import { HTTPSTATUS } from "./config/http.config";
 import { asyncHandler } from "./middlewares/asyncHandler";
 import authRoutes from "./modules/auth/auth.routes";
 import passport from "./middlewares/passport";
-// import sessionRoutes from "./modules/session/session.routes";
 import connectToDatabase from "./database/database";
 import { BadRequestException } from "./common/utils/catch-errors";
 import { ErrorCode } from "./common/enums/error-code.enum";
 import userRoutes from "./modules/user/user.route";
-// import mfaRoutes from "./modules/mfa/mfa.routes";
+import { authenticateJWT } from "./config/passport.config";
+import sessionRoutes from "./modules/session/session.routes";
+import mfaRoutes from "./modules/mfa/mfa.routes";
 
 
 const app = express();
@@ -40,9 +40,6 @@ app.get(
       "This is a bad request",
       ErrorCode.AUTH_INVALID_TOKEN
     );
-    return res.status(HTTPSTATUS.OK).json({
-      message: "Hello Subscribe to the channel & share",
-    });
   })
 );
 
@@ -52,9 +49,9 @@ app.use(`${BASE_PATH}/user`, userRoutes);
 
 app.use(`${BASE_PATH}/workspace`, userRoutes);
 
-// app.use(`${BASE_PATH}/mfa`, mfaRoutes);
+app.use(`${BASE_PATH}/mfa`, mfaRoutes);
 
-// app.use(`${BASE_PATH}/session`, authenticateJWT, sessionRoutes);
+app.use(`${BASE_PATH}/session`, authenticateJWT, sessionRoutes);
 
 app.use(errorHandler);
 

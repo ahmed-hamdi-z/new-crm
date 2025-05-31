@@ -17,7 +17,7 @@ import {
   setAuthenticationCookies,
 } from "../../common/utils/cookie";
 
-import { UnauthorizedException } from "../../common/utils/catch-errors";
+import { NotFoundException, UnauthorizedException } from "../../common/utils/catch-errors";
 import { AuthInfo, LoginDto } from "common/interface/auth.interface";
 import passport from "passport";
 import { config } from "../../config/app.config";
@@ -195,11 +195,15 @@ export class AuthController {
 
   // Add a logout method
   public logout = asyncHandler(async (req: Request, res: Response) => {
-    // Clear the authentication cookies
-    clearAuthenticationCookies(res);
-    return res.status(HTTPSTATUS.OK).json({
-      message: "Logged out successfully",
-    });
+    // @ts-ignore
+       const sessionId = req.sessionId;
+      if (!sessionId) {
+        throw new NotFoundException("Session is invalid.");
+      }
+      await this.authService.logout(sessionId);
+      return clearAuthenticationCookies(res).status(HTTPSTATUS.OK).json({
+        message: "User logout successfully",
+      });
   });
 
   public refreshToken = asyncHandler(

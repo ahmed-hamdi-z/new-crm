@@ -8,7 +8,7 @@ interface UserPreferences {
   pushNotification: boolean;
   theme: "light" | "dark" | "system";
   language: string;
-  twoFactorSecret?: string;
+  twoFactorSecret: string;
 }
 
 // Interface for User Profile
@@ -29,7 +29,7 @@ export interface UserDocument extends Document {
   password?: string;
   profilePicture: string | null;
   isEmailVerified: boolean;
-  isActive: boolean; 
+  isActive: boolean;
   lastLogin: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -51,6 +51,7 @@ export interface UserDocument extends Document {
     | "updatedAt"
     | "currentWorkspace"
     | "profile"
+    | "preferences"
   >;
 }
 
@@ -66,7 +67,7 @@ const userPreferencesSchema = new Schema<UserPreferences>(
       default: "system",
     },
     language: { type: String, default: "en" },
-    twoFactorSecret: { type: String, required: false, select: false },
+    twoFactorSecret: { type: String, required: false, select: true },
   },
   { _id: false }
 );

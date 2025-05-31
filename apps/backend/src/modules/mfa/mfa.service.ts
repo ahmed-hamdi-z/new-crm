@@ -1,168 +1,189 @@
-// import { Request } from "express";
-// import speakeasy from "speakeasy";
-// import qrcode from "qrcode";
-// import UserModel from "../../database/models/user.model";
-// import {
-//   BadRequestException,
-//   NotFoundException,
-//   UnauthorizedException,
-// } from "../../common/utils/catch-errors";
-// import SessionModel from "../../database/models/session.model";
-// import { refreshTokenSignOptions, signJwtToken } from "../../common/utils/jwt";
+import { Request } from "express";
+import speakeasy from "speakeasy";
+import qrcode from "qrcode";
+import UserModel, { UserDocument } from "../../database/models/user.model";
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from "../../common/utils/catch-errors";
+import SessionModel from "../../database/models/session.model";
+import { refreshTokenSignOptions, signJwtToken } from "../../common/utils/jwt";
 
-// export class MfaService {
-//   public async generateMFASetup(req: Request) {
-//     const user = req.user;
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: UserDocument;
+  }
+}
 
-//     if (!user) {
-//       throw new UnauthorizedException("User not authorized");
-//     }
+export class MfaService {
+  public async generateMFASetup(req: Request) {
+    if (!req.user || !req.user._id) {
+      throw new UnauthorizedException(
+        "User not authorized or user ID missing."
+      );
+    }
 
-//     if (user.userPreferences.enable2FA) {
-//       return {
-//         message: "MFA already enabled",
-//       };
-//     }
+    const user = await UserModel.findById(req.user._id);
 
-//     let secretKey = user.userPreferences.twoFactorSecret;
-//     if (!secretKey) {
-//       const secret = speakeasy.generateSecret({ name: "Squeezy" });
-//       secretKey = secret.base32;
-//       user.userPreferences.twoFactorSecret = secretKey;
-//       await user.save();
-//     }
+    if (!user) {
+      throw new NotFoundException("User not found in database.");
+    }
 
-//     const url = speakeasy.otpauthURL({
-//       secret: secretKey,
-//       label: `${user.name}`,
-//       issuer: "squeezy.com",
-//       encoding: "base32",
-//     });
+    if (user.preferences.enable2FA) {
+      return {
+        message: "MFA already enabled",
+      };
+    }
 
-//     const qrImageUrl = await qrcode.toDataURL(url);
+    let secretKey = user.preferences.twoFactorSecret;
+    if (!secretKey) {
+      const secret = speakeasy.generateSecret({ name: "Click" });
+      secretKey = secret.base32;
+      user.preferences.twoFactorSecret = secretKey;
+      await user.save();
+    }
 
-//     return {
-//       message: "Scan the QR code or use the setup key.",
-//       secret: secretKey,
-//       qrImageUrl,
-//     };
-//   }
+    const url = speakeasy.otpauthURL({
+      secret: secretKey,
+      label: `${user.name}`,
+      issuer: "click.sa.net",
+      encoding: "base32",
+    });
 
-//   public async verifyMFASetup(req: Request, code: string, secretKey: string) {
-//     const user = req.user;
+    const qrImageUrl = await qrcode.toDataURL(url);
 
-//     if (!user) {
-//       throw new UnauthorizedException("User not authorized");
-//     }
+    return {
+      message: "Scan the QR code or use the setup key.",
+      secret: secretKey,
+      qrImageUrl,
+    };
+  }
 
-//     if (user.userPreferences.enable2FA) {
-//       return {
-//         message: "MFA is already enabled",
-//         userPreferences: {
-//           enable2FA: user.userPreferences.enable2FA,
-//         },
-//       };
-//     }
+  public async verifyMFASetup(req: Request, code: string, secretKey: string) {
+    if (!req.user || !req.user._id) {
+      throw new UnauthorizedException(
+        "User not authorized or user ID missing."
+      );
+    }
 
-//     const isValid = speakeasy.totp.verify({
-//       secret: secretKey,
-//       encoding: "base32",
-//       token: code,
-//     });
+    const user = await UserModel.findById(req.user._id);
 
-//     if (!isValid) {
-//       throw new BadRequestException("Invalid MFA code. Please try again.");
-//     }
+    if (!user) {
+      throw new NotFoundException("User not found in database.");
+    }
 
-//     user.userPreferences.enable2FA = true;
-//     await user.save();
+    if (user.preferences.enable2FA) {
+      return {
+        message: "MFA is already enabled",
+        userPreferences: {
+          enable2FA: user.preferences.enable2FA,
+        },
+      };
+    }
 
-//     return {
-//       message: "MFA setup completed successfully",
-//       userPreferences: {
-//         enable2FA: user.userPreferences.enable2FA,
-//       },
-//     };
-//   }
+    const isValid = speakeasy.totp.verify({
+      secret: secretKey,
+      encoding: "base32",
+      token: code,
+    });
 
-//   public async revokeMFA(req: Request) {
-//     const user = req.user;
+    if (!isValid) {
+      throw new BadRequestException("Invalid MFA code. Please try again.");
+    }
 
-//     if (!user) {
-//       throw new UnauthorizedException("User not authorized");
-//     }
+    user.preferences.enable2FA = true;
+    await user.save();
 
-//     if (!user.userPreferences.enable2FA) {
-//       return {
-//         message: "MFA is not enabled",
-//         userPreferences: {
-//           enable2FA: user.userPreferences.enable2FA,
-//         },
-//       };
-//     }
+    return {
+      message: "MFA setup completed successfully",
+      userPreferences: {
+        enable2FA: user.preferences.enable2FA,
+      },
+    };
+  }
 
-//     user.userPreferences.twoFactorSecret = undefined;
-//     user.userPreferences.enable2FA = false;
-//     await user.save();
+  public async revokeMFA(req: Request) {
+    if (!req.user || !req.user._id) {
+      throw new UnauthorizedException(
+        "User not authorized or user ID missing."
+      );
+    }
 
-//     return {
-//       message: "MFA revoke successfully",
-//       userPreferences: {
-//         enable2FA: user.userPreferences.enable2FA,
-//       },
-//     };
-//   }
+    const user = await UserModel.findById(req.user._id);
 
-//   public async verifyMFAForLogin(
-//     code: string,
-//     email: string,
-//     userAgent?: string
-//   ) {
-//     const user = await UserModel.findOne({ email });
+    if (!user) {
+      throw new NotFoundException("User not found in database.");
+    }
+    if (!user.preferences.enable2FA) {
+      return {
+        message: "MFA is not enabled",
+        userPreferences: {
+          enable2FA: user.preferences.enable2FA,
+        },
+      };
+    }
 
-//     if (!user) {
-//       throw new NotFoundException("User not found");
-//     }
+    user.preferences.twoFactorSecret;
+    user.preferences.enable2FA = false;
+    await user.save();
 
-//     if (
-//       !user.userPreferences.enable2FA &&
-//       !user.userPreferences.twoFactorSecret
-//     ) {
-//       throw new UnauthorizedException("MFA not enabled for this user");
-//     }
+    return {
+      message: "MFA revoke successfully",
+      userPreferences: {
+        enable2FA: user.preferences.enable2FA,
+      },
+    };
+  }
 
-//     const isValid = speakeasy.totp.verify({
-//       secret: user.userPreferences.twoFactorSecret!,
-//       encoding: "base32",
-//       token: code,
-//     });
+  public async verifyMFAForLogin(
+    code: string,
+    email: string,
+    userAgent?: string
+  ) {
+    const user = await UserModel.findOne({ email });
 
-//     if (!isValid) {
-//       throw new BadRequestException("Invalid MFA code. Please try again.");
-//     }
+    console.log(user);
 
-//     //sign access token & refresh token
-//     const session = await SessionModel.create({
-//       userId: user._id,
-//       userAgent,
-//     });
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
 
-//     const accessToken = signJwtToken({
-//       userId: user._id,
-//       sessionId: session._id,
-//     });
+    if (!user.preferences.enable2FA && !user.preferences.twoFactorSecret) {
+      throw new UnauthorizedException("MFA not enabled for this user");
+    }
 
-//     const refreshToken = signJwtToken(
-//       {
-//         sessionId: session._id,
-//       },
-//       refreshTokenSignOptions
-//     );
+    const isValid = speakeasy.totp.verify({
+      secret: user.preferences.twoFactorSecret,
+      encoding: "base32",
+      token: code,
+    });
 
-//     return {
-//       user,
-//       accessToken,
-//       refreshToken,
-//     };
-//   }
-// }
+    if (!isValid) {
+      throw new BadRequestException("Invalid MFA code. Please try again.");
+    }
+
+    const session = await SessionModel.create({
+      userId: user._id,
+      userAgent,
+    });
+
+    const accessToken = signJwtToken({
+      userId: user._id,
+      sessionId: session._id,
+    });
+
+    const refreshToken = signJwtToken(
+      {
+        sessionId: session._id,
+      },
+      refreshTokenSignOptions
+    );
+
+    return {
+      user,
+      accessToken,
+      refreshToken,
+    };
+  }
+}
