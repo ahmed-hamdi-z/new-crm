@@ -3,7 +3,7 @@ import { CurrentUser } from "../../api/authentication-api";
 import { useQuery } from "@tanstack/react-query";
 import { User } from "../../types/user";
 
-const useCurrent = (opts = {}) => {
+const useAuth = (opts = {}) => {
   const { data: user, ...rest } = useQuery<User>({
     queryKey: [Current],
     queryFn: CurrentUser as any,
@@ -17,4 +17,4 @@ const useCurrent = (opts = {}) => {
   };
 };
 
-export default useCurrent;
+export default useAuth;

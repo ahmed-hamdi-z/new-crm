@@ -9,10 +9,10 @@ import {
 import { DottedSeparator } from "@/components/global/dotted-separator";
 
 import { useLogout } from "@/hooks/authentication/useLogout";
-import useCurrent from "@/hooks/authentication/usecurrent";
+import useAuth from "@/hooks/authentication/useCurrent";
 
 export const UserButton = () => {
-  const { user, isLoading } = useCurrent();
+  const { user, isLoading } = useAuth();
   const { mutate: logout } = useLogout();
 
   if (isLoading) {

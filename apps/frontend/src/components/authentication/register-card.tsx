@@ -1,6 +1,4 @@
-import React, {  useMemo } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import { Link } from "react-router";
 
 import { DottedSeparator } from "@/components/global/dotted-separator";
@@ -14,148 +12,81 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 
-import PasswordStrengthIndicator from "./password-strength-indicator";
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+// Components
+import { PasswordInput } from "./password-input";
+import SocialAuthButton from "./social-auth-button";
 
 // Icons
 import { FcGoogle } from "react-icons/fc";
-import { FaGithub, FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa"; // Added FaSpinner
+import { FaGithub, FaSpinner } from "react-icons/fa";
 
 // Hooks & Types
-import { useRegister } from "@/hooks/authentication/useRegister";
+import { useRegisterForm } from "@/hooks/authentication/useRegisterForm";
 import { appRoutes } from "@/constants/app-routes";
-import {
-  registerSchema,
-  RegisterFormValues,
-  AuthError,
-  calculatePasswordStrength,
-  PasswordStrength,
-} from "@/types/auth";
 import { useResponsiveDesign } from "@/hooks/global/useMediaQuery";
-import SocialLoginButton from "./social-auth-button";
+
+// Social auth buttons component
+const SocialButtons = React.memo(({ 
+  isPending, 
+  onSuccess, 
+  onError 
+}: { 
+  isPending?: boolean;
+  onSuccess?: (response: any) => void;
+  onError?: (error: any) => void;
+}) => (
+  <>
+    <SocialAuthButton
+      provider="google"
+      action="register"
+      icon={<FcGoogle className="size-5" />}
+      isLoading={isPending}
+      onSuccess={onSuccess}
+      onError={onError}
+    />
+    <SocialAuthButton
+      provider="github"
+      action="register"
+      icon={<FaGithub className="size-5" />}
+      isLoading={isPending}
+      onSuccess={onSuccess}
+      onError={onError}
+    />
+  </>
+));
+
+SocialButtons.displayName = "SocialButtons";
 
 /**
  * Renders a registration card with inputs for username, email, password, and confirmation.
  * Includes password strength indicator, password visibility toggle, and social registration options.
  * Optimized for performance and accessibility.
- *
- * @returns A JSX element representing the enhanced registration card.
  */
 const RegisterCard: React.FC = () => {
-  const { mutate, isPending, error: apiError } = useRegister();
-  const [authError, setAuthError] = React.useState<AuthError | null>(null);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-  const [passwordStrength, setPasswordStrength] = React.useState<PasswordStrength>(
-    PasswordStrength.WEAK
-  );
+  const {
+    form,
+    onSubmit,
+    isPending,
+    authError,
+    apiError,
+    showPassword,
+    showConfirmPassword,
+    passwordStrength,
+    togglePasswordVisibility,
+    toggleConfirmPasswordVisibility,
+    serverErrorMessage,
+    // handleSocialLoginSuccess,
+    // handleSocialLoginError,
+  } = useRegisterForm();
+
   const { prefersReducedMotion } = useResponsiveDesign();
 
-  const form = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-    mode: "onChange",
-  });
-
-  const passwordValue = form.watch("password");
-
-  // Update password strength when password changes
-  React.useEffect(() => {
-    setPasswordStrength(calculatePasswordStrength(passwordValue || ""));
-  }, [passwordValue]);
-
-  // Toggle password visibility
-  const togglePasswordVisibility = React.useCallback(() => {
-    setShowPassword((prev) => !prev);
-  }, []);
-
-  // Toggle confirm password visibility
-  const toggleConfirmPasswordVisibility = React.useCallback(() => {
-    setShowConfirmPassword((prev) => !prev);
-  }, []);
-
-  // Handle form submission
-  const onSubmit = React.useCallback(
-    (values: RegisterFormValues) => {
-      setAuthError(null);
-      mutate(values, {
-        onError: (error) => {
-          const errorMessage =
-            error.message || "Registration failed. Please try again.";
-          setAuthError({
-            message: errorMessage,
-          });
-
-          // Set form error for specific fields or a general error
-          form.setError("root.serverError", {
-            type: "manual",
-            message: errorMessage,
-          });
-        },
-      });
-    },
-    [mutate, form]
-  );
-  // Handle social auth success/error
-  const handleSocialAuthSuccess = React.useCallback((response: any) => {
-    console.log("Social registration success:", response);
-    // Handle successful social registration (e.g., redirect)
-  }, []);
-
-  const handleSocialAuthError = React.useCallback((error: any) => {
-    console.error("Social registration error:", error);
-    setAuthError({
-      message:
-        "Social registration failed. Please try again or use email registration.",
-    });
-  }, []);
-
-  // Memoize social auth buttons
-  const socialAuthButtons = useMemo(
-    () => (
-      <>
-        <SocialLoginButton
-          provider="google"
-          action="register"
-          icon={<FcGoogle className="size-5" />}
-          isLoading={isPending}
-          onSuccess={handleSocialAuthSuccess}
-          onError={handleSocialAuthError}
-        />
-        <SocialLoginButton
-          provider="github"
-          action="register"
-          icon={<FaGithub className="size-5" />}
-          isLoading={isPending}
-          onSuccess={handleSocialAuthSuccess}
-          onError={handleSocialAuthError}
-        />
-      </>
-    ),
-    [isPending, handleSocialAuthSuccess, handleSocialAuthError]
-  );
-
-  // Animation classes based on user preferences
-  const animationClass = useMemo(
+  const animationClass = React.useMemo(
     () => (prefersReducedMotion ? "" : "animate-fadeIn"),
     [prefersReducedMotion]
   );
-
-  // Get server error message
-  const serverErrorMessage = form.formState.errors.root?.serverError?.message;
 
   return (
     <Card
@@ -166,23 +97,25 @@ const RegisterCard: React.FC = () => {
         <CardDescription>
           By signing up, you agree to our{" "}
           <Link
-            to={appRoutes.privacy || "/privacy"}
+            to={appRoutes.privacy}
             className="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
           >
             Privacy Policy
           </Link>{" "}
           and{" "}
           <Link
-            to={appRoutes.terms || "/terms"}
+            to={appRoutes.terms}
             className="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
           >
             Terms of Service
           </Link>
         </CardDescription>
       </CardHeader>
+
       <div className="px-7">
         <DottedSeparator />
       </div>
+
       <CardContent className="p-7">
         {(authError || apiError || serverErrorMessage) && (
           <Alert variant="destructive" className="mb-4" role="alert">
@@ -191,6 +124,7 @@ const RegisterCard: React.FC = () => {
             </AlertDescription>
           </Alert>
         )}
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -219,6 +153,7 @@ const RegisterCard: React.FC = () => {
                 </FormItem>
               )}
             />
+
             <FormField
               name="email"
               control={form.control}
@@ -241,87 +176,29 @@ const RegisterCard: React.FC = () => {
                 </FormItem>
               )}
             />
-            <FormField
+
+            <PasswordInput
+              id="password"
               name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Enter Password"
-                        autoComplete="new-password"
-                        aria-required="true"
-                        aria-invalid={!!form.formState.errors.password}
-                        aria-describedby="password-error password-strength-desc"
-                        className="pr-10 focus:ring-2 focus:ring-blue-500"
-                        {...field}
-                      />
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        onClick={togglePasswordVisibility}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none rounded"
-                        aria-label={
-                          showPassword ? "Hide password" : "Show password"
-                        }
-                      >
-                        {showPassword ? (
-                          <FaEyeSlash className="h-5 w-5" />
-                        ) : (
-                          <FaEye className="h-5 w-5" />
-                        )}
-                      </Button>
-                    </div>
-                  </FormControl>
-                  <PasswordStrengthIndicator strength={passwordStrength} />
-                  <FormMessage id="password-error" aria-live="polite" />
-                </FormItem>
-              )}
+              placeholder="Enter Password"
+              showPassword={showPassword}
+              toggleVisibility={togglePasswordVisibility}
+              form={form}
+              showStrengthIndicator
+              strength={passwordStrength}
+              autoComplete="new-password"
             />
-            <FormField
+
+            <PasswordInput
+              id="confirmPassword"
               name="confirmPassword"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        id="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Confirm Password"
-                        autoComplete="new-password"
-                        aria-required="true"
-                        aria-invalid={!!form.formState.errors.confirmPassword}
-                        aria-describedby="confirmPassword-error"
-                        className="pr-10 focus:ring-2 focus:ring-blue-500"
-                        {...field}
-                      />
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        onClick={toggleConfirmPasswordVisibility}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none rounded"
-                        aria-label={
-                          showConfirmPassword
-                            ? "Hide password confirmation"
-                            : "Show password confirmation"
-                        }
-                      >
-                        {showConfirmPassword ? (
-                          <FaEyeSlash className="h-5 w-5" />
-                        ) : (
-                          <FaEye className="h-5 w-5" />
-                        )}
-                      </Button>
-                    </div>
-                  </FormControl>
-                  <FormMessage id="confirmPassword-error" aria-live="polite" />
-                </FormItem>
-              )}
+              placeholder="Confirm Password"
+              showPassword={showConfirmPassword}
+              toggleVisibility={toggleConfirmPasswordVisibility}
+              form={form}
+              autoComplete="new-password"
             />
+
             <Button
               type="submit"
               className="w-full transition-all duration-200 hover:bg-blue-700 focus:outline-none flex items-center justify-center"
@@ -342,23 +219,31 @@ const RegisterCard: React.FC = () => {
           </form>
         </Form>
       </CardContent>
+
       <div className="px-7">
         <DottedSeparator />
       </div>
+
       <CardContent className="flex flex-col gap-y-4 p-7">
-        {socialAuthButtons}
+        <SocialButtons
+          isPending={isPending}
+          // onSuccess={handleSocialLoginSuccess}
+          // onError={handleSocialLoginError}
+        />
       </CardContent>
+
       <div className="px-7">
         <DottedSeparator />
       </div>
+
       <CardContent className="p-7 flex items-center justify-center">
         <p className="text-center">
-          Already have an account?
+          Already have an account?{" "}
           <Link
             to={appRoutes.auth.login}
-            className="text-blue-700 hover:text-blue-800 hover:underline ml-1 focus:outline-none rounded"
+            className="text-blue-700 hover:text-blue-800 hover:underline ml-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
           >
-            Sign In
+            Login
           </Link>
         </p>
       </CardContent>

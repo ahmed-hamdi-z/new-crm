@@ -14,11 +14,13 @@ import userRoutes from "./modules/user/user.route";
 import { authenticateJWT } from "./config/passport.config";
 import sessionRoutes from "./modules/session/session.routes";
 import mfaRoutes from "./modules/mfa/mfa.routes";
+import workspaceRoutes from "./modules/workspace/workspace.routes";
+import memberRoutes from "./modules/member/member.routes";
 
 
 const app = express();
 const BASE_PATH = config.BASE_PATH;
-
+ 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -47,7 +49,9 @@ app.use(`${BASE_PATH}/auth`, authRoutes);
 
 app.use(`${BASE_PATH}/user`, userRoutes);
 
-app.use(`${BASE_PATH}/workspace`, userRoutes);
+app.use(`${BASE_PATH}/member`, authenticateJWT, memberRoutes);
+
+app.use(`${BASE_PATH}/workspace`, authenticateJWT, workspaceRoutes);
 
 app.use(`${BASE_PATH}/mfa`, mfaRoutes);
 

@@ -1,4 +1,4 @@
-import mongoose, { ClientSession } from "mongoose";
+import mongoose from "mongoose";
 import { ErrorCode } from "../../common/enums/error-code.enum";
 import { VerificationEnum } from "../../common/enums/verification-code.enum";
 import {
@@ -49,7 +49,6 @@ import WorkspaceModel from "../../database/models/workspace.model";
 import RoleModel from "../../database/models/roles-permission.model";
 import { Roles } from "../../common/enums/role.enum";
 import MemberModel from "../../database/models/member.model";
-import { access } from "fs";
 
 export class AuthService {
   public async register(registerData: RegisterDto) {
@@ -284,8 +283,7 @@ export class AuthService {
         throw new NotFoundException("Invalid email");
       }
 
-      const user = await UserModel.findById(account.userId)
-        .select("+password");
+      const user = await UserModel.findById(account.userId).select("+password");
 
       if (!user || !user.password) {
         throw new NotFoundException("User not found or password not set");
@@ -302,9 +300,9 @@ export class AuthService {
           `2FA required for user ID: ${user._id}. Not creating session/tokens yet.`
         );
         return {
-          user: null, 
+          user: null,
           mfaRequired: true,
-          accessToken: "", 
+          accessToken: "",
           refreshToken: "",
         };
       }
@@ -333,13 +331,13 @@ export class AuthService {
       logger.info(`Login successful, tokens created for user ID: ${user._id}`);
 
       return {
-        user: user.omitPassword(), 
+        user: user.omitPassword(),
         accessToken,
         refreshToken,
-        mfaRequired: false, 
+        mfaRequired: false,
       };
     } catch (error: any) {
-      throw error; 
+      throw error;
     }
   }
 

@@ -1,17 +1,17 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import useCurrent from "@/hooks/authentication/usecurrent"
+import useCurrent from "@/hooks/authentication/useCurrent"
 
 
 const Profile = () => {
   const { user } = useCurrent()
   if (!user) return null
-  const { email, verified, createdAt } = user
+  const { email, isEmailVerified, createdAt } = user
 
   return (
     <div className="flex flex-col items-center mt-16 text-center">
       <h1 className="text-2xl font-bold mb-4">My Account</h1>
 
-      {!verified && (
+      {!isEmailVerified && (
         <Alert variant="destructive" className="w-fit mb-3 rounded-xl">
           <AlertTitle>Warning</AlertTitle>
           <AlertDescription>Please verify your email</AlertDescription>

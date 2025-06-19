@@ -70,16 +70,19 @@ export const registerSchema = z.object({
     field?: string;
   };
   
+  // User type
+  export type User = {
+    id: string;
+    email: string;
+    userName?: string;
+    avatar?: string;
+  };
+  
   // Auth response types
   export type AuthResponse = {
-    user: {
-      id: string;
-      email: string;
-      userName?: string;
-      avatar?: string;
-    };
-    token: string;
-    refreshToken?: string;
+    user: User;
+    accessToken: string;
+    refreshToken: string;
   };
   
   // Password strength levels

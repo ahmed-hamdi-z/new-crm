@@ -4,6 +4,7 @@ import { Current } from "@/constants/shared";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+const AUTH_QUERY_KEY = ['auth'];
 
 export const useLogout = () => {
   const reload = () => {
@@ -11,9 +12,12 @@ export const useLogout = () => {
       window.location.reload();
     }, 1000);
   };
+
   const mutation = useMutation({
     mutationFn: logoutApi,
     onSuccess: () => {
+      // Clear auth state
+      queryClient.setQueryData(AUTH_QUERY_KEY, null);
       queryClient.invalidateQueries({ queryKey: [Current] });
       toast.success("Logged out");
       reload();
@@ -22,5 +26,6 @@ export const useLogout = () => {
       toast.error(error.message || "Failed to log out");
     },
   });
+
   return mutation;
 };

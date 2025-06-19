@@ -9,3 +9,5 @@ export const verifyMfaForLoginSchema = z.object({
   email: z.string().trim().email().min(1),
   userAgent: z.string().optional(),
 });
+
+

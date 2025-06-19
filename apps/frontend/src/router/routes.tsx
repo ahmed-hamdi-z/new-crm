@@ -1,10 +1,7 @@
-import { createBrowserRouter } from "react-router";
 import { appRoutes } from "@/constants/app-routes";
-
-// Pages
 import Dashboard from "@/pages/Dashboard";
 import Home from "@/pages/Home";
-import ProtectedRoute from "./protected-route";
+import ProtectedRoute from "../components/authentication/protected-route";
 import {
   ForgotPassword,
   Login,
@@ -14,31 +11,45 @@ import {
 } from "@/pages/Authentication";
 import Profile from "@/components/user-account/profile";
 import ProfileSettings from "@/components/user-account/profile-settings";
+import { JSX } from "react";
 
-const router = createBrowserRouter([
-  // renders at "/"
+export type RouteObject = {
+  index?: boolean;
+  element?: JSX.Element;
+  path?: string;
+  children?: RouteObject[];
+  layout?: string;
+  Component?: JSX.Element;
+};
+
+const routes: RouteObject[] = [
   { index: true, element: <Home /> },
 
   // authentication routes
   {
     element: <Login />,
     path: appRoutes.auth.login,
+    layout: "auth",
   },
   {
     element: <Register />,
     path: appRoutes.auth.register,
+    layout: "auth",
   },
   {
     element: <VerifyEmail />,
     path: appRoutes.auth.verifyEmail,
+    layout: "auth",
   },
   {
     element: <ForgotPassword />,
     path: appRoutes.auth.forgotPassword,
+    layout: "auth",
   },
   {
     element: <ResetPassword />,
     path: appRoutes.auth.resetPassword,
+    layout: "auth",
   },
   {
     element: (
@@ -62,13 +73,14 @@ const router = createBrowserRouter([
         <Dashboard />
       </ProtectedRoute>
     ),
+    layout: "dashboard",
     path: appRoutes.dashboard.path,
     children: [
       // renders at "/dashboard"
-      { index: true, Component: Dashboard },
+      { index: true, Component: <Dashboard /> },
       // { path: "settings", Component: DashboardSettings }
     ],
   },
-]);
+];
 
-export default router;
+export default routes;

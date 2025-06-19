@@ -11,10 +11,9 @@ const options = {
 };
 
 const TokenRefreshClient = axios.create(options);
-TokenRefreshClient.interceptors.response.use((response) =>  response.data);
+TokenRefreshClient.interceptors.response.use((response) => response.data);
 
 const API = axios.create(options);
-
 API.interceptors.response.use(
   (response) => response.data,
   async (error) => {
@@ -37,7 +36,6 @@ API.interceptors.response.use(
         });
       }
     }
-
     return Promise.reject({ status, ...data });
   }
 );

@@ -1,10 +1,12 @@
 import React from "react";
 import { RouterProvider } from "react-router";
-import router from "./routes";
+import router from "./router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import queryClient from "./config/query-client";
 import { Toaster } from "@/components/ui/sonner";
+
+import Loader from "./components/global/loader";
 
 /**
  * The App component sets up the main application context and routing.
@@ -17,7 +19,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 function App() {
   return (
-    <React.Suspense fallback="log">
+    <React.Suspense fallback={<Loader />}>
       <QueryClientProvider client={queryClient}>
         <Toaster />
         <RouterProvider router={router} />
@@ -26,4 +28,5 @@ function App() {
     </React.Suspense>
   );
 }
+
 export default App;
