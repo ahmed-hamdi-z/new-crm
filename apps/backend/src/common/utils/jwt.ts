@@ -21,12 +21,14 @@ const defaults: SignOptions = {
 };
 
 export const accessTokenSignOptions: SignOptsAndSecret = {
-  expiresIn: parseInt(config.JWT.EXPIRES_IN),
+  // @ts-ignore
+  expiresIn: config.JWT.EXPIRES_IN,
   secret: config.JWT.SECRET,
 };
 
 export const refreshTokenSignOptions: SignOptsAndSecret = {
-  expiresIn: parseInt(config.JWT.REFRESH_EXPIRES_IN) ,
+  // @ts-ignore
+  expiresIn: config.JWT.REFRESH_EXPIRES_IN,
   secret: config.JWT.REFRESH_SECRET,
 };
 
@@ -35,7 +37,7 @@ export const signJwtToken = (
   options?: SignOptsAndSecret
 ) => {
   const { secret, ...opts } = options || accessTokenSignOptions;
-  return jwt.sign(payload, secret, { 
+  return jwt.sign(payload, secret, {
     ...defaults,
     ...opts,
   });

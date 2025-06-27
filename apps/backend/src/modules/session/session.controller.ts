@@ -16,7 +16,7 @@ export class SessionController {
     // @ts-ignore
     const userId = req.user?._id;
     // @ts-ignore
-    const sessionId = req.sessionId;
+    const sessionId = req?.sessionId;
 
     const { sessions } = await this.sessionService.getAllSession(userId);
 

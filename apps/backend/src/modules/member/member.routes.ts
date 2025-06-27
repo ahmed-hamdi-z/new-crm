@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { memberController } from "./member.module";
 
-const workspaceRoutes = Router();
+const memberRoutes = Router();
 
-// workspaceRoutes.post("/create/new", memberController.getMemberRoleInWorkspace);
+memberRoutes.post("/workspace/:inviteCode/join", memberController.joinWorkspaceByInviteHandler);
 
-export default workspaceRoutes;
+export default memberRoutes;

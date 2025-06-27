@@ -1,9 +1,13 @@
 import passport from "passport";
-import { configurePassport } from "../config/passport.config";
+import { setupJwtStrategy } from "../common/strategies/jwt.strategy";
+import { SetupGoogleStrategy, SetupLocalStrategy } from "../config/passport.config";
 
-const intializePassport = () => {
- configurePassport(passport);
+const initializePassport = () => {
+  setupJwtStrategy(passport);
+  SetupGoogleStrategy(passport);
+  SetupLocalStrategy(passport);
 };
 
-intializePassport();
+initializePassport();
+
 export default passport;

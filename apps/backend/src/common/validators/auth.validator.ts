@@ -1,3 +1,4 @@
+import { access } from "fs";
 import { z } from "zod";
 
 export const emailSchema = z.string().trim().email().min(1).max(255);
@@ -20,6 +21,9 @@ export const loginSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   userAgent: z.string().optional(),
+  accessToken: z.string().optional(),
+  refreshToken: z.string().optional(),
+  mfaRequired: z.boolean().optional(),
 });
 
 export const verificationEmailSchema = z.object({

@@ -38,21 +38,7 @@ export interface UserDocument extends Document {
   profile: UserProfile;
   comparePassword(value: string): Promise<boolean>;
   toJSON(): Omit<UserDocument, "password" | "preferences.twoFactorSecret">;
-  omitPassword(): Pick<
-    UserDocument,
-    | "_id"
-    | "name"
-    | "email"
-    | "profilePicture"
-    | "isEmailVerified"
-    | "isActive"
-    | "lastLogin"
-    | "createdAt"
-    | "updatedAt"
-    | "currentWorkspace"
-    | "profile"
-    | "preferences"
-  >;
+  omitPassword(): Omit<UserDocument, "password">;
 }
 
 // User Preferences Schema
@@ -129,7 +115,7 @@ const userSchema = new Schema<UserDocument>(
       default: null,
     },
     currentWorkspace: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Workspace",
     },
     preferences: {

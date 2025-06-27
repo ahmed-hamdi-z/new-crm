@@ -7,13 +7,16 @@ export interface RegisterDto {
 }
 
 export interface LoginDto {
-  email: string;
+  email?: string;
   password?: string;
   userAgent?: string;
   providerId?: string;
   provider?: string;
   picture?: string;
   displayName?: string;
+  accessToken?: string;
+  refreshToken?: string;
+  mfaRequired?: boolean;
 }
 
 export interface resetPasswordDto {

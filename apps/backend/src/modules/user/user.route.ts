@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { userController } from "./user.module";
-import { authenticateJWT } from "../../config/passport.config";
-
+import { authenticateJWT } from "../../common/strategies/jwt.strategy";
 
 const userRoutes = Router();
 

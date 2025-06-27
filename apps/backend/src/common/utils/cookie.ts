@@ -4,8 +4,8 @@ import { calculateExpirationDate } from "./date-time";
 
 type CookiePayloadType = {
   res: Response;
-  accessToken: string;
-  refreshToken: string;
+  accessToken?: string ;
+  refreshToken?: string;
 };
 
 export const REFRESH_PATH = `${config.BASE_PATH}/auth/refresh`;
