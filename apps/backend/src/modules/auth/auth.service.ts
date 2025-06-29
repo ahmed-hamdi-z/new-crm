@@ -39,7 +39,7 @@ import {
 } from "../../mailers/templates/template";
 
 import { HTTPSTATUS } from "../../config/http.config";
-import { hashValue } from "../../common/utils/bcrypt";
+import { compareValue, hashValue } from "../../common/utils/bcrypt";
 
 import { logger } from "../../common/utils/logger";
 
@@ -271,23 +271,24 @@ export class AuthService {
       throw new NotFoundException("Invalid email or password");
     }
 
-    const user = await UserModel.findById(account.userId);
+    const user = await UserModel.findById(account.userId).select("+password");
 
-    if (!user) {
+    if (!user || !user.password) {
       logger.warn(`No user found for account ID: ${account._id}`);
       throw new NotFoundException("User not found for the given account");
     }
 
-    logger.info(`Found user with ID: ${user._id} for verification`);
-    const hashedPassword = await hashValue(password);
-
-    if (!hashedPassword) {
-      logger.error(`Password hashing failed for user ID: ${user._id}`);
-      throw new UnauthorizedException("Invalid email or password");
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      logger.warn(`Login failed: Invalid password for email: ${email}`);
+      throw new BadRequestException(
+        "Invalid email or password provided",
+        ErrorCode.AUTH_USER_NOT_FOUND
+      );
     }
 
     logger.info(`User verification successful for ID: ${user._id}`);
-    return user;
+    return user.omitPassword();
   }
 
   public async refreshToken(refreshToken: string) {

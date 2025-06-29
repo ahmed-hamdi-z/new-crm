@@ -1,4 +1,3 @@
-
 const appRoutes = {
   home: "/",
   dashboard: {
@@ -33,9 +32,7 @@ const apiRoutes = {
     verifyEmail: "/api/auth/email/verify/:code",
     resetPassword: "/api/auth/password/reset",
     forgotPassword: "/api/auth/password/forgot",
-    sessions: "api/session/all",
-    session: "/api/session",
-    deleteSession: "/api/session/:id",
+    sessions: "/sessions",
     refresh: "/api/auth/refresh",
   },
   workspace: {

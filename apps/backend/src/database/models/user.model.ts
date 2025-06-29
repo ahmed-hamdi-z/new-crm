@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { compareValue } from "../../common/utils/bcrypt";
+import { compareValue, hashValue } from "../../common/utils/bcrypt";
 
 // Interface for User Preferences
 interface UserPreferences {
@@ -141,16 +141,24 @@ const userSchema = new Schema<UserDocument>(
     },
   }
 );
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    if (this.password) {
+      this.password = await hashValue(this.password);
+    }
+  }
+  next();
+});
 
 // Method to compare passwords
 userSchema.methods.comparePassword = async function (value: string) {
   return compareValue(value, this.password);
 };
 
-userSchema.methods.omitPassword = function () {
-  const user = this.toObject();
-  delete user.password;
-  return user;
+userSchema.methods.omitPassword = function (): Omit<UserDocument, "password"> {
+  const userObject = this.toObject();
+  delete userObject.password;
+  return userObject;
 };
 
 // Virtual for full name (if needed)

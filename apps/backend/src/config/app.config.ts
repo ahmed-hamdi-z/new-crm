@@ -17,7 +17,7 @@ const appConfig = () => ({
     REFRESH_SECRET: getEnv("JWT_REFRESH_SECRET"),
     REFRESH_EXPIRES_IN: getEnv("JWT_REFRESH_EXPIRES_IN", "30d"),
   },
-
+ 
   SESSION_SECRET: getEnv("SESSION_SECRET"),
   SESSION_EXPIRES_IN: getEnv("SESSION_EXPIRES_IN"),
 

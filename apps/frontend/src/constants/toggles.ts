@@ -1,4 +1,4 @@
-import { TogglesStateProps } from "@/hooks/toggles";
+import { TogglesStateProps } from "@/types/toggles";
 
 const TOGGLES_KEY = "toggles";
 
@@ -19,5 +19,4 @@ const DEFAULT_TOGGLES: TogglesStateProps = {
   ],
 };
 
-export { TOGGLES_KEY, DEFAULT_TOGGLES };  
-  
+export { TOGGLES_KEY, DEFAULT_TOGGLES };

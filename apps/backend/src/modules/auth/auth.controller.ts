@@ -58,6 +58,7 @@ export class AuthController {
       const { user } = await this.authService.registerUser(body);
       return res.status(HTTPSTATUS.CREATED).json({
         message: "User registered successfully",
+        mfaRequired: false,
         data: user,
       });
     }
