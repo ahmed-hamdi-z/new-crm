@@ -8,3 +8,4 @@ sessionRoutes.get("/", sessionController.getSession);
 sessionRoutes.delete("/:id", sessionController.deleteSession);
 
 export default sessionRoutes;
+ 

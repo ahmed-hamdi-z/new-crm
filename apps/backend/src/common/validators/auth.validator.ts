@@ -1,4 +1,3 @@
-import { access } from "fs";
 import { z } from "zod";
 
 export const emailSchema = z.string().trim().email().min(1).max(255);

@@ -1,7 +1,5 @@
 import axios from "axios";
-import queryClient from "./query-client";
-import { navigate } from "@/lib/navigation";
-import { apiRoutes, appRoutes } from "@/constants/app-routes";
+import { apiRoutes } from "@/constants/app-routes";
 
 export const UNAUTHORIZED = 401;
 
@@ -10,30 +8,29 @@ const options = {
   withCredentials: true,
 };
 
-const TokenRefreshClient = axios.create(options);
-TokenRefreshClient.interceptors.response.use((response) => response.data);
-
 const API = axios.create(options);
-API.interceptors.response.use(
-  (response) => response.data,
-  async (error) => {
-    const { config, response } = error;
-    const { status, data } = response || {};
 
-    if (status === UNAUTHORIZED && data?.errorCode === "InvalidAccessToken") {
+export const APIRefresh = axios.create(options);
+APIRefresh.interceptors.response.use((response) => response);
+
+API.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const { data, status } = error.response;
+    if (data.errorCode === "AUTH_TOKEN_NOT_FOUND" && status === 401) {
       try {
-        await TokenRefreshClient.get(apiRoutes.auth.refresh);
-        return TokenRefreshClient(config);
+        await APIRefresh.get(apiRoutes.auth.refresh);
+        return APIRefresh(error.config);
       } catch (error) {
-        queryClient.clear();
-        navigate(appRoutes.auth.login, {
-          state: {
-            redirectUrl: window.location.pathname,
-          },
-        });
+        console.log(error);
+        window.location.href = "/";
       }
     }
-    return Promise.reject({ status, ...data });
+    return Promise.reject({
+      ...data,
+    });
   }
 );
 

@@ -1,19 +1,20 @@
 import { PropsWithChildren, Suspense, useEffect, useState } from "react";
 import ThemeProvider from "@/components/shared/theme-provider";
 // import Footer from './Footer';
-// import Header from './Header';
-// import PageSetting from "@/components/dashboard/page-settings";
-// import Loader from "@/components/global/loader";
+import ThemeSetting from "@/components/shared/theme-settings";
+
 import { useToggles } from "@/hooks/toggles";
 import useGoToTop from "@/hooks/shared/useGoToTop";
+import  Loader  from "@/components/shared/loader"
+import Sidebar from "./sidebar";
+import Header from "./header";
 
-// import Sidebar from './Sidebar';
 // import Portals from '@/components/Portals';
 
 const ThemeLayout = ({ children }: PropsWithChildren) => {
   const { toggles, toggleSidebar } = useToggles();
 
-  const [showLoader, ] = useState(true);
+  const [showLoader, setShowLoader] = useState(true);
   const [showTopButton, setShowTopButton] = useState(false);
 
   const { goToTop } = useGoToTop();
@@ -49,8 +50,7 @@ const ThemeLayout = ({ children }: PropsWithChildren) => {
           onClick={() => toggleSidebar}
         ></div>
         {/* screen loader */}
-        {showLoader && "loading..."}
-        {/* {showLoader && <Loader onFadeOut={() => setShowLoader(false)} />} */}
+        {showLoader && <Loader onFadeOut={() => setShowLoader(false)} />}
 
         <div className="fixed bottom-6 ltr:right-6 rtl:left-6 z-50">  
           {showTopButton && (
@@ -78,19 +78,19 @@ const ThemeLayout = ({ children }: PropsWithChildren) => {
         </div>
 
         {/* BEGIN APP SETTING LAUNCHER */}
-        {/* <PageSetting /> */}
+        <ThemeSetting />
         {/* END APP SETTING LAUNCHER */}
 
         <div
           className={`${toggles.navbar} main-container text-black dark:text-white-dark min-h-screen`}
         >
           {/* BEGIN SIDEBAR */}
-          {/* <Sidebar /> */}Sidebar
+          <Sidebar />
           {/* END SIDEBAR */}
           {/* BEGIN CONTENT AREA */}
           <div className="main-content">
             {/* BEGIN TOP NAVBAR */}
-            {/* <Header /> */}Header
+             <Header /> 
             {/* END TOP NAVBAR */}
             <Suspense>
               <div className={`${toggles.animation} p-6 animate__animated`}>

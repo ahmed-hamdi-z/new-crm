@@ -33,22 +33,34 @@ export class AuthController {
     this.authService = authService;
   }
 
-  public googleCallbackHandler = asyncHandler(
-    async (req: Request, res: Response) => {
-      // @ts-ignore
-      const currentWorkspace = req.user?.currentWorkspace;
+ public googleCallbackHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    // @ts-ignore
+    const { accessToken, refreshToken, mfaRequired, currentWorkspace } = req.user;
 
-      if (!currentWorkspace) {
-        return res.redirect(
-          `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure`
-        );
-      }
-
+    if (mfaRequired) {
       return res.redirect(
-        `${config.FRONTEND_ORIGIN}/workspace/${currentWorkspace}`
+        `${config.FRONTEND_GOOGLE_CALLBACK_URL}?mfaRequired=true`
       );
     }
-  );
+
+    if (!currentWorkspace) {
+      return res.redirect(
+        `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure`
+      );
+    }
+
+    setAuthenticationCookies({
+      res,
+      accessToken,
+      refreshToken,
+    });
+
+    return res.redirect(
+      `${config.FRONTEND_ORIGIN}/workspace/${currentWorkspace}`
+    );
+  }
+);
 
   public registerUserHandler = asyncHandler(
     async (req: Request, res: Response) => {
@@ -83,18 +95,15 @@ export class AuthController {
             });
           }
 
-          // Get user agent for MFA if needed
           const userAgent = req.headers["user-agent"];
           const body = loginSchema.parse({
             ...req.body,
             userAgent,
           });
 
-          // Call auth service for token generation and MFA check
           const { accessToken, refreshToken, mfaRequired } =
             await authService.loginOrCreateAccount(body);
 
-          // Handle MFA case
           if (mfaRequired) {
             return res.status(HTTPSTATUS.OK).json({
               message: "Verify MFA authentication",
@@ -102,7 +111,6 @@ export class AuthController {
               user,
             });
           }
-          // @ts-ignore
           req.logIn(user, (err: Error) => {
             if (err) {
               return next(err);

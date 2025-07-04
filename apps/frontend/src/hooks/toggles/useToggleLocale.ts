@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TOGGLES_KEY } from "@/constants/toggles";
-import { TogglesStateProps } from ".";
 
 import i18next from "i18next";
+import { TogglesStateProps } from "@/types/toggles";
 
 const useToggleLocale = () => {
   const queryClient = useQueryClient();

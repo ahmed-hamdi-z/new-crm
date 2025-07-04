@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TOGGLES_KEY } from "@/constants/toggles";
-import { TogglesStateProps } from ".";
+import { TogglesStateProps } from "@/types/toggles";
 
 const useToggleAnimation = () => {
     const queryClient = useQueryClient();

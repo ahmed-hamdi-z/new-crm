@@ -1,19 +1,18 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import { useLogin } from "@/features/auth/hooks/useLogin";
-import { useResponsiveDesign } from "@/hooks/shared/useMediaQuery";
 import { AuthError } from "@/types/auth.error";
 import { SocialAuthProviders } from "@/features/auth/components/social-auth-providers";
 
 import { DottedSeparator } from "@/components/shared/dotted-separator";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
 import {
   Form,
   FormControl,
@@ -22,14 +21,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
 import { LoginFormValues, loginSchema } from "@/features/auth/types";
 import AUTH_ROUTES from "@/features/auth/router/route.path";
+
+import AuthCard from "@/features/auth/components/auth-card";
 
 const Login: React.FC = () => {
   const { mutate, isPending } = useLogin();
   const [showPassword, setShowPassword] = React.useState(false);
   const [authError, setAuthError] = React.useState<AuthError | null>(null);
-  const { prefersReducedMotion } = useResponsiveDesign();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -57,24 +58,15 @@ const Login: React.FC = () => {
     [mutate]
   );
 
-  const animationClass = useMemo(
-    () => (prefersReducedMotion ? "" : "animate-fadeIn"),
-    [prefersReducedMotion]
-  );
-
   return (
-    <Card
-      className={`w-full h-full md:w-[487px] shadow-sm shadow-slate-400 ${animationClass}`}
-    >
-      <CardHeader className="flex items-center justify-center text-center p-7">
-        <CardTitle className="text-2xl font-bold">Welcome back!</CardTitle>
-      </CardHeader>
-
-      <div className="px-7">
+    <AuthCard title="Welcome back!">
+      <div className="-mt-7">
+        {" "}
+        {/* Adjust margin to offset CardContent padding */}
         <DottedSeparator />
       </div>
 
-      <CardContent className="p-7">
+      <div className="pt-7">
         {authError && (
           <Alert
             variant="destructive"
@@ -157,7 +149,7 @@ const Login: React.FC = () => {
 
             <div className="flex items-center justify-between">
               <Link
-              to={`/${AUTH_ROUTES.FORGOT_PASSWORD}?email=${form.getValues().email}`}
+                to={`/${AUTH_ROUTES.FORGOT_PASSWORD}?email=${form.getValues().email}`}
                 className="text-sm text-blue-700 hover:text-blue-800 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
               >
                 Forgot password?
@@ -175,36 +167,36 @@ const Login: React.FC = () => {
             </Button>
           </form>
         </Form>
-      </CardContent>
 
-      <div className="px-7">
-        <DottedSeparator />
+        <div className="px-0 pt-7">
+          <DottedSeparator />
+        </div>
+
+        <div className="flex flex-col gap-y-4 pt-7">
+          <SocialAuthProviders
+            action="login"
+            isLoading={isPending}
+            providers={["google"]}
+          />
+        </div>
+
+        <div className="px-0 pt-7">
+          <DottedSeparator />
+        </div>
+
+        <div className="pt-7 flex items-center justify-center -mb-7">
+          <p className="text-center">
+            Don&apos;t have an account?
+            <Link
+              to={AUTH_ROUTES.SIGN_UP}
+              className="text-blue-700 hover:text-blue-800 hover:underline ml-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+            >
+              Sign Up
+            </Link>
+          </p>
+        </div>
       </div>
-
-      <CardContent className="flex flex-col gap-y-4 p-7">
-        <SocialAuthProviders
-          action="login"
-          isLoading={isPending}
-          providers={["google"]}
-        />
-      </CardContent>
-
-      <div className="px-7">
-        <DottedSeparator />
-      </div>
-
-      <CardContent className="p-7 flex items-center justify-center">
-        <p className="text-center">
-          Don&apos;t have an account?
-          <Link
-            to={AUTH_ROUTES.SIGN_UP}
-            className="text-blue-700 hover:text-blue-800 hover:underline ml-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
-          >
-            Sign Up
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+    </AuthCard>
   );
 };
 

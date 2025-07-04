@@ -5,16 +5,9 @@ interface PasswordStrengthIndicatorProps {
   strength: PasswordStrength;
 }
 
-/**
- * A visual indicator for password strength
- *
- * @param strength - The calculated password strength level
- * @returns A JSX element representing the password strength indicator
- */
 const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({
   strength,
 }) => {
-  // Determine colors and width based on strength
   const { barColor, barWidth, strengthText } = useMemo(() => {
     switch (strength) {
       case PasswordStrength.WEAK:

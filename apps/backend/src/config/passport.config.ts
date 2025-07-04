@@ -26,15 +26,24 @@ export const SetupGoogleStrategy = (passport: PassportStatic) => {
             throw new NotFoundException("Google ID (sub) is missing");
           }
 
-          const user = await authService.loginOrCreateAccount({
+          const result = await authService.loginOrCreateAccount({
             provider: ProviderEnum.GOOGLE,
             displayName: profile.displayName,
             providerId: googleId,
             picture: picture,
             email: email,
+            userAgent: req.headers["user-agent"] as string, // Add user agent for session
           });
-          
-          done(null, user.user);
+
+          // Attach the tokens to the user object
+          const userWithTokens = {
+            ...result.user.toObject(),
+            accessToken: result.accessToken,
+            refreshToken: result.refreshToken,
+            mfaRequired: result.mfaRequired,
+          };
+
+          done(null, userWithTokens);
         } catch (error) {
           done(error, false);
         }

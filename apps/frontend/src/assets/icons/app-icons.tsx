@@ -1,4 +1,4 @@
-export const SystemIcon = (
+export const SystemIcon = () => (
   <svg
     width="20"
     height="20"

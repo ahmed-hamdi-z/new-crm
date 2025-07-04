@@ -1,10 +1,12 @@
 import { z } from "zod";
 
 export type loginType = { email: string; password: string };
-export type LoginResponseType = {
+export type UserResponseType = {
+  preferences: any;
+  currentWorkspace: any;
   message: string;
   mfaRequired: boolean;
-  user: {
+  user?: {
     _id: string;
     email: string;
     name: string;
@@ -33,13 +35,35 @@ export type registerType = {
 };
 
 export type forgotPasswordType = { email: string };
-
+export type resetPasswordType = { password: string; verificationCode: string };
+export type verifyEmailType = { code: string };
+export type verifyMFAType = { code: string; secretKey: string };
+export type mfaType = {
+  message: string;
+  secret: string;
+  qrImageUrl: string;
+};
+export type mfaLoginType = { code: string; email: string };
 export enum PasswordStrength {
   WEAK = "weak",
   MEDIUM = "medium",
   STRONG = "strong",
   VERY_STRONG = "very-strong",
 }
+
+export type SessionType = {
+  _id: string;
+  userId: string;
+  userAgent: string;
+  createdAt: string;
+  expiresAt: string;
+  isCurrent: boolean;
+};
+
+export type SessionResponseType = {
+  message: string;
+  sessions: SessionType[];
+};
 
 export const loginSchema = z.object({
   email: z.string().trim().email("Invalid email address").min(1, {
@@ -78,8 +102,31 @@ export const registerSchema = z
 export type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export const forgotPasswordSchema = z.object({
-    email: z.string().trim().email().min(1, {
-      message: "Email is required",
-    }),
-  });
+  email: z.string().trim().email().min(1, {
+    message: "Email is required",
+  }),
+});
 export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z
+  .object({
+    password: z.string().trim().min(1, {
+      message: "Password is required",
+    }),
+    confirmPassword: z.string().trim().min(1, {
+      message: "Confirm password is required",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Password does not match",
+    path: ["confirmPassword"],
+  });
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
+
+export const mafSchema = z.object({
+  pin: z.string().min(6, {
+    message: "Your one-time password must be 6 characters.",
+  }),
+});
+
+export type MafSchemaFormValues = z.infer<typeof mafSchema>;

@@ -1,6 +1,6 @@
 import { baseURL } from "@/lib/base-url";
 
-type SocialProvider = 'google' | 'github' | 'facebook' | 'twitter';
+type SocialProvider = "google" | "github" | "facebook" | "twitter";
 
 export const getSocialAuthUrl = (provider: SocialProvider): string => {
   return `${baseURL}/api/auth/${provider}`;
@@ -11,12 +11,12 @@ export const initiateSocialAuth = (provider: SocialProvider) => {
 };
 
 export const handleSocialAuthResponse = (response: any) => {
-  console.log('Social auth success:', response);
+  console.log("Social auth success:", response);
 };
 
 export const handleSocialAuthError = (error: any) => {
-  console.error('Social auth error:', error);
+  console.error("Social auth error:", error);
   return {
-    message: error.message || 'Social authentication failed. Please try again.'
+    message: error.message || "Social authentication failed. Please try again.",
   };
 };

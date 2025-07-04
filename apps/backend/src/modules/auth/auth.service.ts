@@ -39,7 +39,7 @@ import {
 } from "../../mailers/templates/template";
 
 import { HTTPSTATUS } from "../../config/http.config";
-import { compareValue, hashValue } from "../../common/utils/bcrypt";
+import { hashValue } from "../../common/utils/bcrypt";
 
 import { logger } from "../../common/utils/logger";
 
