@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./index.html", "./src/**/*.{js,ts,jsx,tsx}",
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
     "./src/components/**/*.{js,ts,jsx,tsx}",
     "./src/pages/**/*.{js,ts,jsx,tsx}",
-],
+  ],
   darkMode: "class",
   theme: {
     container: {
@@ -12,8 +13,9 @@ module.exports = {
     },
     extend: {
       colors: {
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        "white-dark": "rgba(255, 255, 255, 0.8)",
         primary: {
           DEFAULT: "#4361ee",
           light: "#eaf1ff",

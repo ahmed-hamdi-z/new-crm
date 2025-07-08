@@ -1,14 +1,13 @@
-import { ChevronIcon } from "@/assets/icons/sidebar-icons";
-import { MenuSection } from "@/types/sidebar";
+import { ButtonSection } from "@/types/sidebar";
 
-const MenuButton = ({
+const SidebarButtons = ({
   section,
   isActive,
   onClick,
-  label
+  label,
 }: {
-  section: MenuSection;
-  isActive: boolean;
+  section: ButtonSection;
+  isActive?: boolean;
   onClick: () => void;
   label: string;
 }) => (
@@ -21,12 +20,11 @@ const MenuButton = ({
   >
     <div className="flex items-center">
       {section.icon}
-      <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+      <p className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
         {label}
-      </span>
+      </p>
     </div>
-    <ChevronIcon isOpen={isActive} />
   </button>
 );
 
-export default MenuButton;
+export default SidebarButtons;

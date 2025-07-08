@@ -1,16 +1,9 @@
 import { JSX } from "react";
 
-interface MenuItem {
-  key: string;
-  label: string;
-  path: string;
-}
-
-interface MenuSection {
+export interface ButtonSection {
   id: string;
   title: string;
   icon: JSX.Element;
-  items: MenuItem[];
+  path: string;
 }
 
-export type { MenuItem, MenuSection };

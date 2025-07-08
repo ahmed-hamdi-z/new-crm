@@ -5,9 +5,8 @@ import {
   TaskStatusEnum,
   TaskStatusEnumType,
 } from "../../common/enums/task.enum";
-import { codeGenerator } from "../../common/utils/uuid";
+import { generateTaskCode } from "../../common/utils/uuid";
 
-const taskCode = codeGenerator.generateTaskCode();
 export interface TaskDocument extends Document {
   taskCode: string;
   title: string;
@@ -28,7 +27,7 @@ const taskSchema = new Schema<TaskDocument>(
     taskCode: {
       type: String,
       unique: true,
-      default: taskCode,
+      default: generateTaskCode,
     },
     title: {
       type: String,

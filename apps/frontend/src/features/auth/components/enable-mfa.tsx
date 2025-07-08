@@ -3,7 +3,6 @@ import { Copy, Check, Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import {
   Dialog,
   DialogContent,
@@ -30,13 +29,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import RevokeMfa from "./revoke-mfa";
 import useMfaSetup from "../hooks/useMfaSetup";
 import { useVeriftMfaSetup } from "../hooks/useVerifyMfaSetup";
-import {
-  mafSchema,
-  MafSchemaFormValues,
-  mfaType,
-  verifyMFAType,
-} from "../types";
+import { mafSchema, MafSchemaFormValues } from "../types/validator";
 import AuthCard from "./auth-card";
+import { mfaType, verifyMFAType } from "../types";
 
 const EnableMfa: React.FC = () => {
   const { user } = useAuthContext();
@@ -92,7 +87,10 @@ const EnableMfa: React.FC = () => {
         <RevokeMfa />
       ) : (
         <Dialog modal open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger className="w-full flex items-center justify-center" asChild>
+          <DialogTrigger
+            className="w-full flex items-center justify-center"
+            asChild
+          >
             <Button className="h-[35px] -mt-5 text-white">Enable MFA</Button>
           </DialogTrigger>
           <DialogContent className="!gap-0">

@@ -21,7 +21,10 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { useVeriftMfaLogin } from "@/features/auth/hooks/useVerifyMfaLogin";
-import { mafSchema, MafSchemaFormValues } from "@/features/auth/types";
+import {
+  mafSchema,
+  MafSchemaFormValues,
+} from "@/features/auth/types/validator";
 
 const VerifyMfaLogin = () => {
   const navigate = useNavigate();

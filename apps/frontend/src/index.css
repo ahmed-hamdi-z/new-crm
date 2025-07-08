@@ -8,7 +8,7 @@
   }
 
   body {
-    @apply bg-[#fafafa] font-nunito;
+    @apply bg-[#fafafa];
   }
 
   body.dark {
@@ -726,4 +726,3 @@ pre.hljs {
     --chart-5: 340 75% 55%;
   }
 }
-

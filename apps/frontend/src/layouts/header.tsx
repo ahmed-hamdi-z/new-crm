@@ -1,6 +1,5 @@
-import { useEffect } from "react";
-import { Link, NavLink, useLocation } from "react-router";
-import { useTranslation } from "react-i18next";
+import { useEffect, useMemo } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
 import useToggleTheme from "@/hooks/toggles/useToggleTheme";
 import useToggleSidebar from "@/hooks/toggles/useToggleSidebar";
 import { DEFAULT_TOGGLES, TOGGLES_KEY } from "@/constants/toggles";
@@ -13,14 +12,21 @@ import {
   IconSun,
   IconMoon,
   IconSystem,
-  IconDashboard,
-  IconChevronRight,
 } from "@/assets/icons/header-icons";
 import UserDropdown from "@/components/header/user-button";
+import SidebarButtons from "@/components/sidebar/sidebar-buttons";
+import { FileLockIcon, HomeIcon, SettingsIcon } from "lucide-react";
+import { ButtonSection } from "@/types/sidebar";
+import useWorkspaceId from "@/features/workspace/hooks/client/useWorkspaceId";
+import { useTranslation } from "react-i18next";
+import { FaTasks } from "react-icons/fa";
 
 const Header = () => {
+  const isActive = true;
   const location = useLocation();
+  const workspaceId = useWorkspaceId();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const toggleThemeMutation = useToggleTheme();
   const toggleSidebarMutation = useToggleSidebar();
   const queryClient = useQueryClient();
@@ -32,7 +38,6 @@ const Header = () => {
   const { rtlClass, theme, isDarkMode, menu } = toggles;
   const isRtl = rtlClass === "rtl";
 
-  // Handle active menu items based on current route
   useEffect(() => {
     const selector = document.querySelector(
       `ul.horizontal-menu a[href="${window.location.pathname}"]`
@@ -60,6 +65,36 @@ const Header = () => {
     }
   }, [location.pathname]);
 
+ const buttonSections: ButtonSection[] = useMemo(
+    () => [
+      {
+        id: "dashboard",
+        title: t("dashboard"),
+        icon: <HomeIcon />,
+        path: `/workspace/${workspaceId}`,
+      },
+         {
+        id: "tasks",
+        title: t("tasks"),
+        icon: <FaTasks />,
+        path: `/workspace/${workspaceId}/tasks`,
+      },
+         {
+        id: "members",
+        title: t("members"),
+        icon: <FileLockIcon />,
+        path: `/workspace/${workspaceId}/members`,
+      },
+      {
+        id: "settings",
+        title: t("settings"),
+        icon: <SettingsIcon />,
+        path: `/workspace/${workspaceId}/settings`,
+      },
+    ],
+    [t]
+  );
+
   const handleThemeToggle = () => {
     if (theme === "light") toggleThemeMutation.mutate("dark");
     else if (theme === "dark") toggleThemeMutation.mutate("system");
@@ -78,13 +113,6 @@ const Header = () => {
         return <IconSun className="w-5 h-5" />;
     }
   };
-
-  const dashboardMenuItems = [
-    { text: t("sales"), to: "/" },
-    { text: t("analytics"), to: "/analytics" },
-    { text: t("finance"), to: "/finance" },
-    { text: t("crypto"), to: "/crypto" },
-  ];
 
   return (
     <header className={isDarkMode && menu === "horizontal" ? "dark" : ""}>
@@ -158,24 +186,16 @@ const Header = () => {
 
         {/* Horizontal Menu */}
         <ul className="horizontal-menu hidden py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] dark:border-[#191e3a] dark:bg-black text-black dark:text-white-dark">
-          <li className="menu nav-item relative">
-            <button type="button" className="nav-link">
-              <div className="flex items-center">
-                <IconDashboard className="w-5 h-5" />
-                <span className="px-1">{t("dashboard")}</span>
-              </div>
-              <div className="right_arrow">
-                <IconChevronRight className="w-4 h-4 rotate-90" />
-              </div>
-            </button>
-            <ul className="sub-menu">
-              {dashboardMenuItems.map((item, index) => (
-                <li key={index}>
-                  <NavLink to={item.to}>{item.text}</NavLink>
-                </li>
-              ))}
-            </ul>
-          </li>
+          {buttonSections.map((section) => (
+            <li key={section.id} className="menu nav-item relative">
+              <SidebarButtons
+                label={section.title}
+                section={section}
+                onClick={() => navigate(section.path)}
+                isActive={!isActive ? isActive === section.path : false}
+              />
+            </li>
+          ))}
         </ul>
       </div>
     </header>

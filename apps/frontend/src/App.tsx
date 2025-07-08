@@ -5,13 +5,15 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import queryClient from "./config/query-client";
 import { Toaster } from "@/components/ui/sonner";
-
+import { NuqsAdapter } from "nuqs/adapters/react";
 function App() {
   return (
     <React.Suspense fallback="loaging...">
       <QueryClientProvider client={queryClient}>
         <Toaster />
-        <RouterProvider router={router} />
+        <NuqsAdapter>
+          <RouterProvider router={router} />
+        </NuqsAdapter>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </React.Suspense>

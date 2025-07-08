@@ -27,7 +27,7 @@ export const SocialAuthButton: React.FC<SocialAuthButtonProps> = memo(
     action,
     icon,
     isLoading = false,
-    onSuccess,
+    onSuccess, 
     onError,
     ...props
   }) => {

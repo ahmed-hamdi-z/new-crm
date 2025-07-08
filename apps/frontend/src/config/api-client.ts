@@ -1,5 +1,6 @@
 import axios from "axios";
 import { apiRoutes } from "@/constants/app-routes";
+import { ErrorCode } from "@/types/error-code";
 
 export const UNAUTHORIZED = 401;
 
@@ -28,8 +29,19 @@ API.interceptors.response.use(
         window.location.href = "/";
       }
     }
+    if (data.errorCode === "ACCESS_UNAUTHORIZED") {
+      window.location.href = "/";
+      return;
+    }
+
+    const customError: ErrorCode = {
+      ...error,
+      errorCode: data.errorCode || "UNKNOWN_ERROR",
+    };
+    
+
     return Promise.reject({
-      ...data,
+      ...data, customError,
     });
   }
 );

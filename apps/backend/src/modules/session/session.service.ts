@@ -5,7 +5,7 @@ import SessionModel from "../../database/models/session.model";
 export class SessionService {
   public async getAllSession(userId: string) {
     logger.info(`Fetching all active sessions for user ${userId}`);
-    
+
     const sessions = await SessionModel.find(
       {
         userId,
@@ -25,10 +25,11 @@ export class SessionService {
       }
     );
 
-    logger.info(`Retrieved ${sessions.length} active sessions for user ${userId}`);
+    logger.info(
+      `Retrieved ${sessions.length} active sessions for user ${userId}`
+    );
     return { sessions };
   }
-
   public async getSessionById(sessionId: string) {
     logger.info(`Fetching session by ID: ${sessionId}`);
     
@@ -51,14 +52,16 @@ export class SessionService {
 
   public async deleteSession(sessionId: string, userId: string) {
     logger.info(`Attempting to delete session ${sessionId} for user ${userId}`);
-    
+
     const deletedSession = await SessionModel.findByIdAndDelete({
       _id: sessionId,
       userId: userId,
     });
 
     if (!deletedSession) {
-      logger.warn(`Session not found for deletion - ID: ${sessionId}, User: ${userId}`);
+      logger.warn(
+        `Session not found for deletion - ID: ${sessionId}, User: ${userId}`
+      );
       throw new NotFoundException("Session not found");
     }
 

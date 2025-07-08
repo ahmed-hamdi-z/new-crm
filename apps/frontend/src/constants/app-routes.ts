@@ -1,29 +1,3 @@
-const appRoutes = {
-  home: "/",
-  dashboard: {
-    path: "/dashboard",
-  },
-  admin: "/admin",
-  auth: {
-    path: "/auth",
-    login: "/login",
-    register: "/register",
-    verifyEmail: "/email/verify/:code",
-    resetPassword: "/password/reset",
-    forgotPassword: "/password/forgot",
-  },
-  user: {
-    profile: "/profile",
-    profileSettings: "/profile/settings",
-  },
-  workspace: {
-    path: "/workspace",
-    create: "/create/workspace",
-  },
-  privacy: "/privacy",
-  terms: "/terms",
-};
-
 const apiRoutes = {
   auth: {
     login: "/api/auth/login",
@@ -41,11 +15,15 @@ const apiRoutes = {
     mafRevoke: "/api/mfa/revoke"
   },
   workspace: {
-    create: "/create/workspace",
+    create: "/api/workspace/create/new",
+    allWorkspacesUserIsMember: "/api/workspace/all",
+    getWorkspaceById: "/api/workspace",
+    update: "/api/workspace/update",
+    delete: "/api/workspace/delete",
   },
   user: {
     current: "/api/user/current",
   },
 };
 
-export { appRoutes, apiRoutes };
+export { apiRoutes };

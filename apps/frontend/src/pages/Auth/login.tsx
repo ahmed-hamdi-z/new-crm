@@ -22,7 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { LoginFormValues, loginSchema } from "@/features/auth/types";
+import { LoginFormValues, loginSchema } from "@/features/auth/types/validator";
 import AUTH_ROUTES from "@/features/auth/router/route.path";
 
 import AuthCard from "@/features/auth/components/auth-card";

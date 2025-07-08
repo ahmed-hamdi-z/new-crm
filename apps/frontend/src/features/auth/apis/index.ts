@@ -10,16 +10,22 @@ import {
   mfaType,
   mfaLoginType,
   SessionResponseType,
+  LoginResponseType,
 } from "../types";
 import { apiRoutes } from "@/constants/app-routes";
 
-const loginApi = async (data: loginType): Promise<UserResponseType> => {
+const loginApi = async (data: loginType): Promise<LoginResponseType> => {
   const response = await API.post(apiRoutes.auth.login, data);
   return response.data;
 };
 const registerApi = async (data: registerType) =>
   await API.post(apiRoutes.auth.register, data);
 
+const getCurrentUserApi =
+  async () => {
+    const response = await API.get(apiRoutes.user.current);
+    return response.data;
+  };
 const forgotPasswordApi = async (data: forgotPasswordType) =>
   await API.post(apiRoutes.auth.forgotPassword, data);
 
@@ -59,6 +65,7 @@ const deleteSessionApi = async (id: string) =>
 export {
   loginApi,
   registerApi,
+  getCurrentUserApi,
   forgotPasswordApi,
   resetPasswordApi,
   verifyEmailApi,

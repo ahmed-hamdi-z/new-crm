@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { VerificationEnum } from "../../common/enums/verification-code.enum";
 import { Schema } from "mongoose";
-import { codeGenerator } from "../../common/utils/uuid";
+import { generateUniqueCode } from "../../common/utils/uuid";
 
-const uniqueCode = codeGenerator.generateUniqueCode();
+
 export interface VerificationCodeDocument extends Document {
   userId: mongoose.Types.ObjectId;
   code: string;
@@ -23,7 +23,7 @@ const verificationCodeSchema = new Schema<VerificationCodeDocument>({
     type: String,
     unique: true,
     required: true,
-    default: uniqueCode,
+    default: generateUniqueCode,
   },
   type: {
     type: String,

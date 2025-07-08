@@ -1,20 +1,22 @@
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { DEFAULT_TOGGLES, TOGGLES_KEY } from "@/constants/toggles";
 import { TogglesStateProps } from "@/types/toggles";
 import useToggleSidebar from "@/hooks/toggles/useToggleSidebar";
 import { useResponsiveDesign } from "@/hooks/shared/useMediaQuery";
-import { MenuSection } from "@/types/sidebar";
+import { ButtonSection } from "@/types/sidebar";
 import { HomeIcon } from "@/assets/icons/sidebar-icons";
 import SidebarHeader from "@/components/sidebar/sidebar-header";
-import MenuButton from "@/components/sidebar/menu-button";
-import SubMenu from "@/components/sidebar/sub-menu";
 import SectionHeader from "@/components/sidebar/header-section";
-
-const SIDEBAR_WIDTH = 260;
+import { DottedSeparator } from "@/components/shared/dotted-separator";
+import WorkspaceSwitcher from "@/features/workspace/components/workspace-switcher";
+import SidebarButtons from "@/components/sidebar/sidebar-buttons";
+import { FileLockIcon, SettingsIcon } from "lucide-react";
+import useWorkspaceId from "@/features/workspace/hooks/client/useWorkspaceId";
+import { FaTasks } from "react-icons/fa";
 
 const useActiveMenuItem = () => {
   useEffect(() => {
@@ -50,7 +52,9 @@ const useResponsiveSidebar = (toggles: TogglesStateProps, location: any) => {
 };
 
 const Sidebar = () => {
-  const [currentMenu, setCurrentMenu] = useState<string>("");
+  const workspaceId = useWorkspaceId();
+  const navigate = useNavigate();
+  const [currentActive] = useState<string>("");
   const location = useLocation();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -62,18 +66,31 @@ const Sidebar = () => {
     [queryClient]
   );
 
-  const menuSections: MenuSection[] = useMemo(
+  const buttonSections: ButtonSection[] = useMemo(
     () => [
       {
         id: "dashboard",
         title: t("dashboard"),
         icon: <HomeIcon />,
-        items: [
-          { key: "sales", label: "sales", path: "/" },
-          { key: "analytics", label: "analytics", path: "/analytics" },
-          { key: "finance", label: "finance", path: "/finance" },
-          { key: "crypto", label: "crypto", path: "/crypto" },
-        ],
+        path: `/workspace/${workspaceId}`,
+      },
+         {
+        id: "tasks",
+        title: t("tasks"),
+        icon: <FaTasks />,
+        path: `/workspace/${workspaceId}/tasks`,
+      },
+         {
+        id: "members",
+        title: t("members"),
+        icon: <FileLockIcon />,
+        path: `/workspace/${workspaceId}/members`,
+      },
+      {
+        id: "settings",
+        title: t("settings"),
+        icon: <SettingsIcon />,
+        path: `/workspace/${workspaceId}/settings`,
       },
     ],
     [t]
@@ -81,11 +98,6 @@ const Sidebar = () => {
 
   useActiveMenuItem();
   const { toggleSidebar } = useResponsiveSidebar(toggles, location);
-  const { prefersReducedMotion } = useResponsiveDesign();
-
-  const toggleMenu = useCallback((value: string) => {
-    setCurrentMenu((oldValue) => (oldValue === value ? "" : value));
-  }, []);
 
   const handleToggleSidebar = useCallback(() => {
     toggleSidebar();
@@ -93,7 +105,7 @@ const Sidebar = () => {
 
   const sidebarClasses = useMemo(
     () =>
-      `sidebar fixed min-h-screen h-full top-0 bottom-0 w-[${SIDEBAR_WIDTH}px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] z-50 transition-all duration-300 ${
+      `sidebar fixed min-h-screen h-full top-0 bottom-0 w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] z-50 transition-all duration-300 ${
         toggles.semidark ? "text-white-dark" : ""
       }`,
     [toggles.semidark]
@@ -107,21 +119,19 @@ const Sidebar = () => {
             onToggle={handleToggleSidebar}
             brandText={t("CLICK")}
           />
-
+          <div className="px-2 pb-2">
+            <DottedSeparator />
+          </div>
+          <WorkspaceSwitcher />
           <PerfectScrollbar className="h-[calc(100vh-80px)] relative">
             <ul className="relative font-semibold space-y-0.5 p-4 py-0">
-              {menuSections.map((section) => (
+              {buttonSections.map((section) => (
                 <li key={section.id} className="menu nav-item">
-                  <MenuButton
-                    section={section}
-                    isActive={currentMenu === section.id}
-                    onClick={() => toggleMenu(section.id)}
+                  <SidebarButtons
                     label={section.title}
-                  />
-                  <SubMenu
-                    items={section.items}
-                    isVisible={currentMenu === section.id}
-                    prefersReducedMotion={prefersReducedMotion}
+                    section={section}
+                    isActive={currentActive === section.id}
+                    onClick={() => navigate(section.path)}
                   />
                 </li>
               ))}

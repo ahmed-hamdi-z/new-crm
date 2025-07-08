@@ -36,7 +36,7 @@ export class UserService {
   public async findUserByEmail(email: string): Promise<UserDocument> {
     logger.info(`Attempting to find user by email: ${email}`);
     
-    logger.debug(`Querying database for user email: ${email}`);
+    logger.debug(`Querying database for user email: ${email}`); 
     const user = await UserModel.findOne({ email }).lean();
 
     if (!user) {

@@ -4,13 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router";
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 
-import { appRoutes } from "@/constants/app-routes";
 import { useRegister } from "@/features/auth/hooks/useRegister";
 import {
-  PasswordStrength,
   RegisterFormValues,
   registerSchema,
-} from "@/features/auth/types";
+} from "@/features/auth/types/validator";
 import { AuthError } from "@/types/auth.error";
 import { SocialAuthProviders } from "@/features/auth/components/social-auth-providers";
 import PasswordStrengthIndicator from "@/features/auth/components/password-strength-indicator";
@@ -30,6 +28,7 @@ import { calculatePasswordStrength } from "@/features/auth/components/calculate-
 
 import AuthCard from "@/features/auth/components/auth-card";
 import AUTH_ROUTES from "@/features/auth/router/route.path";
+import { PasswordStrength } from "@/features/auth/types";
 
 const Register: React.FC = () => {
   const { mutate, isPending, error: apiError } = useRegister();
@@ -91,14 +90,14 @@ const Register: React.FC = () => {
     <>
       By signing up, you agree to our{" "}
       <Link
-        to={appRoutes.privacy || "/privacy"}
+        to={"/privacy"}
         className="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
       >
         Privacy Policy
       </Link>{" "}
       and{" "}
       <Link
-        to={appRoutes.terms || "/terms"}
+        to={"/terms"}
         className="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
       >
         Terms of Service

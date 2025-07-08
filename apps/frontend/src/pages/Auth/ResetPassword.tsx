@@ -15,7 +15,7 @@ import { ArrowLeft, Frown } from "lucide-react";
 import React from "react";
 import AuthCard from "@/features/auth/components/auth-card";
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
-import { ResetPasswordFormValues, resetPasswordSchema } from "@/features/auth/types";
+import { ResetPasswordFormValues, resetPasswordSchema } from "@/features/auth/types/validator";
 import { useResetPassword } from "@/features/auth/hooks/useResetPassword";
 import AUTH_ROUTES from "@/features/auth/router/route.path";
 

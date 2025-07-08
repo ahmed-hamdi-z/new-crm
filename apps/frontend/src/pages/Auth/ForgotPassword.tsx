@@ -18,7 +18,7 @@ import { useForgotPassword } from "@/features/auth/hooks/useForgotPassword";
 import {
   ForgotPasswordFormValues,
   forgotPasswordSchema,
-} from "@/features/auth/types";
+} from "@/features/auth/types/validator";
 
 import AuthCard from "@/features/auth/components/auth-card";
 import { ArrowRight } from "lucide-react";

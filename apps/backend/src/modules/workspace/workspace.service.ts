@@ -39,7 +39,7 @@ export class WorkspaceService {
     }
 
     logger.debug(`Creating new workspace: ${name}`);
-    const workspace = await WorkspaceModel.create({
+    const workspace = new WorkspaceModel({
       name,
       description,
       owner: user._id,
