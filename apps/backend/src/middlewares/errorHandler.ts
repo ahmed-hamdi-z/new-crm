@@ -20,7 +20,7 @@ const formatZodError = (res: Response, error: z.ZodError) => {
 
 export const errorHandler: ErrorRequestHandler = (
   error,
-  req,
+  req, 
   res,
   next
 ): any => {

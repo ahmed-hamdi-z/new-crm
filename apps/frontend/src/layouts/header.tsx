@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router";
 import useToggleTheme from "@/hooks/toggles/useToggleTheme";
 import useToggleSidebar from "@/hooks/toggles/useToggleSidebar";
 import { DEFAULT_TOGGLES, TOGGLES_KEY } from "@/constants/toggles";
@@ -14,22 +14,24 @@ import {
   IconSystem,
 } from "@/assets/icons/header-icons";
 import UserDropdown from "@/components/header/user-button";
-import SidebarButtons from "@/components/sidebar/sidebar-buttons";
-import { FileLockIcon, HomeIcon, SettingsIcon } from "lucide-react";
-import { ButtonSection } from "@/types/sidebar";
 import useWorkspaceId from "@/features/workspace/hooks/client/useWorkspaceId";
-import { useTranslation } from "react-i18next";
-import { FaTasks } from "react-icons/fa";
+import SidebarGroupButtons from "@/components/sidebar/sidebar-buttons";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MenuIcon } from "lucide-react";
 
 const Header = () => {
-  const isActive = true;
   const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
   const workspaceId = useWorkspaceId();
-  const { t } = useTranslation();
-  const navigate = useNavigate();
   const toggleThemeMutation = useToggleTheme();
   const toggleSidebarMutation = useToggleSidebar();
   const queryClient = useQueryClient();
+  const pathname = window.location.pathname;
 
   const toggles =
     queryClient.getQueryData<TogglesStateProps>([TOGGLES_KEY]) ||
@@ -64,36 +66,6 @@ const Header = () => {
       }
     }
   }, [location.pathname]);
-
- const buttonSections: ButtonSection[] = useMemo(
-    () => [
-      {
-        id: "dashboard",
-        title: t("dashboard"),
-        icon: <HomeIcon />,
-        path: `/workspace/${workspaceId}`,
-      },
-         {
-        id: "tasks",
-        title: t("tasks"),
-        icon: <FaTasks />,
-        path: `/workspace/${workspaceId}/tasks`,
-      },
-         {
-        id: "members",
-        title: t("members"),
-        icon: <FileLockIcon />,
-        path: `/workspace/${workspaceId}/members`,
-      },
-      {
-        id: "settings",
-        title: t("settings"),
-        icon: <SettingsIcon />,
-        path: `/workspace/${workspaceId}/settings`,
-      },
-    ],
-    [t]
-  );
 
   const handleThemeToggle = () => {
     if (theme === "light") toggleThemeMutation.mutate("dark");
@@ -185,17 +157,26 @@ const Header = () => {
         </div>
 
         {/* Horizontal Menu */}
-        <ul className="horizontal-menu hidden py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] dark:border-[#191e3a] dark:bg-black text-black dark:text-white-dark">
-          {buttonSections.map((section) => (
-            <li key={section.id} className="menu nav-item relative">
-              <SidebarButtons
-                label={section.title}
-                section={section}
-                onClick={() => navigate(section.path)}
-                isActive={!isActive ? isActive === section.path : false}
-              />
-            </li>
-          ))}
+        <ul className=" horizontal-menu hidden h-14 py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] dark:border-[#191e3a] dark:bg-black text-black dark:text-white-dark">
+          <DropdownMenu>
+            <DropdownMenuTrigger onClick={() => setIsOpen(!isOpen)}>
+              <div className="flex items-center gap-2">
+                <MenuIcon className="h-5 w-5" />
+                <span>Menu</span>
+              </div>
+            </DropdownMenuTrigger>
+
+            {isOpen && (
+              <DropdownMenuContent className=" bg-white w-40">
+                <DropdownMenuItem className=" flex items-center space-x-3 focus:bg-transparent focus:outline-none">
+                  <SidebarGroupButtons
+                    workspaceId={workspaceId}
+                    currentActive={pathname}
+                  />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            )}
+          </DropdownMenu>
         </ul>
       </div>
     </header>

@@ -5,6 +5,7 @@ const useGetAllWorkspacesUserIsMember = () => {
   const query = useQuery({
       queryKey: ["userWorkspaces"],
       queryFn: getAllWorkspacesUserIsMemberApi,
+      refetchOnWindowFocus: false, 
       staleTime: 1,
       refetchOnMount: true,
     });

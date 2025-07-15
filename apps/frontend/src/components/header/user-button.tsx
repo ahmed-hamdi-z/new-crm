@@ -51,7 +51,7 @@ const UserDropdown = ({ isRtl }: UserDropdownProps) => {
           />
         }
       >
-        <ul className="text-dark dark:text-white-dark !py-0 w-[230px] font-semibold dark:text-white-light/90">
+        <ul className="text-dark !py-0 w-[230px] font-semibold dark:text-white-light/90">
           <li>
             <div className="flex items-center px-4 py-4">
               <img

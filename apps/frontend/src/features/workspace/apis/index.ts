@@ -1,6 +1,9 @@
 import API from "@/config/api-client";
 import {
+  AllMembersInWorkspaceResponseType,
   AllWorkspaceResponseType,
+  AnalyticsResponseType,
+  ChangeWorkspaceMemberRoleType,
   CreateWorkspaceResponseType,
   CreateWorkspaceType,
   EditWorkspaceType,
@@ -52,10 +55,49 @@ const deleteWorkspaceApi = async (
   return response.data;
 };
 
+const getWorkspaceAnalyticsApi = async (
+  workspaceId: string
+): Promise<AnalyticsResponseType> => {
+  const response = await API.get(`${apiRoutes.workspace.getAnalytics}/${workspaceId}`);
+  return response.data;
+};
+
+const getMembersInWorkspaceApi = async (
+  workspaceId: string
+): Promise<AllMembersInWorkspaceResponseType> => {
+  const response = await API.get(`${apiRoutes.workspace.getMembers}/${workspaceId}`);
+  return response.data;
+};
+
+const changeWorkspaceMemberRoleApi = async ({
+  workspaceId,
+  data,
+}: ChangeWorkspaceMemberRoleType) => {
+  const response = await API.put(
+    `${apiRoutes.workspace.changeMemberRole}/${workspaceId}`,
+    data
+  );
+  return response.data;
+};
+
+ const invitedUserJoinWorkspaceApi = async (
+  iniviteCode: string
+): Promise<{
+  message: string;
+  workspaceId: string;
+}> => {
+  const response = await API.post(`/api/member/workspace/${iniviteCode}/join`);
+  return response.data;
+};
+
 export {
   createWorkspaceApi,
   editWorkspaceApi,
   deleteWorkspaceApi,
   getAllWorkspacesUserIsMemberApi,
+  getMembersInWorkspaceApi,
+  changeWorkspaceMemberRoleApi,
+  getWorkspaceAnalyticsApi,
   getWorkspaceByIdApi,
+  invitedUserJoinWorkspaceApi
 };

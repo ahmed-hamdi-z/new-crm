@@ -17,9 +17,12 @@ const apiRoutes = {
   workspace: {
     create: "/api/workspace/create/new",
     allWorkspacesUserIsMember: "/api/workspace/all",
+    getMembers: "/api/workspace/members",
+    changeMemberRole: "/api/workspace/change/member/role",
     getWorkspaceById: "/api/workspace",
     update: "/api/workspace/update",
     delete: "/api/workspace/delete",
+    getAnalytics: "/api/workspace/analytics",
   },
   user: {
     current: "/api/user/current",

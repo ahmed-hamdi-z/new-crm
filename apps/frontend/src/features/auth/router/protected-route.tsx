@@ -16,7 +16,7 @@ const ProtectedRoute = ({ children }: PropsWithChildren) => {
     );
   }
 
-  return user ? children : <Navigate to="/" replace />;
+  return user ? children : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;

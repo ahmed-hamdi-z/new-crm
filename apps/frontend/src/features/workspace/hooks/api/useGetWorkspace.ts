@@ -6,6 +6,7 @@ const useGetWorkspaceById = (workspaceId: string) => {
   const query = useQuery<any, ErrorCode>({
     queryKey: ["workspace", workspaceId],
     queryFn: () => getWorkspaceByIdApi(workspaceId),
+    refetchOnWindowFocus: false,
     staleTime: 0,
     retry: 2,
     enabled: !!workspaceId,

@@ -9,8 +9,6 @@ import  Loader  from "@/components/shared/loader"
 import Sidebar from "./sidebar";
 import Header from "./header";
 
-// import Portals from '@/components/Portals';
-
 const ThemeLayout = ({ children }: PropsWithChildren) => {
   const { toggles, toggleSidebar } = useToggles();
 

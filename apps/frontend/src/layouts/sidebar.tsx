@@ -1,22 +1,17 @@
-import PerfectScrollbar from "react-perfect-scrollbar";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useLocation } from "react-router";
+import { useEffect, useCallback, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { DEFAULT_TOGGLES, TOGGLES_KEY } from "@/constants/toggles";
 import { TogglesStateProps } from "@/types/toggles";
 import useToggleSidebar from "@/hooks/toggles/useToggleSidebar";
 import { useResponsiveDesign } from "@/hooks/shared/useMediaQuery";
-import { ButtonSection } from "@/types/sidebar";
-import { HomeIcon } from "@/assets/icons/sidebar-icons";
 import SidebarHeader from "@/components/sidebar/sidebar-header";
-import SectionHeader from "@/components/sidebar/header-section";
 import { DottedSeparator } from "@/components/shared/dotted-separator";
 import WorkspaceSwitcher from "@/features/workspace/components/workspace-switcher";
-import SidebarButtons from "@/components/sidebar/sidebar-buttons";
-import { FileLockIcon, SettingsIcon } from "lucide-react";
 import useWorkspaceId from "@/features/workspace/hooks/client/useWorkspaceId";
-import { FaTasks } from "react-icons/fa";
+import SidebarGroupButtons from "@/components/sidebar/sidebar-buttons";
+import ProjectsNav from "@/features/projects/components/projects-nav";
 
 const useActiveMenuItem = () => {
   useEffect(() => {
@@ -53,47 +48,15 @@ const useResponsiveSidebar = (toggles: TogglesStateProps, location: any) => {
 
 const Sidebar = () => {
   const workspaceId = useWorkspaceId();
-  const navigate = useNavigate();
-  const [currentActive] = useState<string>("");
   const location = useLocation();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-
+  const pathname = window.location.pathname;
   const toggles = useMemo(
     () =>
       queryClient.getQueryData<TogglesStateProps>([TOGGLES_KEY]) ||
       DEFAULT_TOGGLES,
     [queryClient]
-  );
-
-  const buttonSections: ButtonSection[] = useMemo(
-    () => [
-      {
-        id: "dashboard",
-        title: t("dashboard"),
-        icon: <HomeIcon />,
-        path: `/workspace/${workspaceId}`,
-      },
-         {
-        id: "tasks",
-        title: t("tasks"),
-        icon: <FaTasks />,
-        path: `/workspace/${workspaceId}/tasks`,
-      },
-         {
-        id: "members",
-        title: t("members"),
-        icon: <FileLockIcon />,
-        path: `/workspace/${workspaceId}/members`,
-      },
-      {
-        id: "settings",
-        title: t("settings"),
-        icon: <SettingsIcon />,
-        path: `/workspace/${workspaceId}/settings`,
-      },
-    ],
-    [t]
   );
 
   useActiveMenuItem();
@@ -123,22 +86,19 @@ const Sidebar = () => {
             <DottedSeparator />
           </div>
           <WorkspaceSwitcher />
-          <PerfectScrollbar className="h-[calc(100vh-80px)] relative">
-            <ul className="relative font-semibold space-y-0.5 p-4 py-0">
-              {buttonSections.map((section) => (
-                <li key={section.id} className="menu nav-item">
-                  <SidebarButtons
-                    label={section.title}
-                    section={section}
-                    isActive={currentActive === section.id}
-                    onClick={() => navigate(section.path)}
-                  />
-                </li>
-              ))}
+          <div className="px-2 pb-2">
+            <DottedSeparator />
+          </div>
 
-              <SectionHeader title={t("other fields")} />
-            </ul>
-          </PerfectScrollbar>
+          <SidebarGroupButtons
+            workspaceId={workspaceId}
+            currentActive={pathname}
+          />
+          <div className="px-2 pb-2">
+            <DottedSeparator />
+          </div>
+
+          <ProjectsNav />
         </div>
       </nav>
     </div>

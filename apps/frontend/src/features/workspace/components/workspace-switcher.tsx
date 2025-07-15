@@ -55,7 +55,7 @@ const WorkspaceSwitcher = () => {
   return (
     <>
       <SidebarGroupLabel className="w-full justify-between pr-3">
-        <span className="font-semibold pl-2">Workspaces</span>
+        <span className="font-semibold">Workspaces</span>
         <button
           onClick={onOpen}
           className="flex size-5 items-center justify-center rounded-full border"
