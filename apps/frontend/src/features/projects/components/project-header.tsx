@@ -1,18 +1,16 @@
-import { useParams } from "react-router";
-// import CreateTaskDialog from "../task/create-task-dialog";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import useWorkspaceId from "@/features/workspace/hooks/client/useWorkspaceId";
-import { getProjectByIdApi } from "../apis";
 import PermissionsGuard from "@/components/shared/permission-guard";
 import { Permissions } from "@/constants/permissions";
 import EditProjectDialog from "./edit-project";
+import { useParams } from "react-router";
+import useWorkspaceId from "@/features/workspace/hooks/client/useWorkspaceId";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { getProjectByIdApi } from "../apis";
 
 const ProjectHeader = () => {
   const param = useParams();
   const projectId = param.projectId as string;
 
   const workspaceId = useWorkspaceId();
-
   const { data, isPending, isError } = useQuery({
     queryKey: ["singleProject", projectId],
     queryFn: () =>
@@ -27,7 +25,6 @@ const ProjectHeader = () => {
 
   const project = data?.project;
 
-  // Fallback if no project data is found
   const projectEmoji = project?.emoji || "📊";
   const projectName = project?.name || "Untitled project";
 
@@ -36,8 +33,8 @@ const ProjectHeader = () => {
     if (isError) return <span>Error occured</span>;
     return (
       <>
-        <span>{projectEmoji}</span>
-        {projectName}
+        <span> {projectEmoji} </span>
+        <span> {projectName} </span>
       </>
     );
   };

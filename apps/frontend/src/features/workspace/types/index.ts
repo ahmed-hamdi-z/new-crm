@@ -93,6 +93,17 @@ export type AnalyticsResponseType = {
   };
 };
 
+export type ProjectnalyticsResponseType = {
+  message: string;
+  analytics: {
+    analytics: {
+      totalTasks: number;
+      overdueTasks: number;
+      completedTasks: number;
+    };
+  };
+};
+
 export type PaginationType = {
   totalCount: number;
   pageSize: number;

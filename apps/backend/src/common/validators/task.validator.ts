@@ -36,6 +36,7 @@ export const createTaskSchema = z.object({
   status: statusSchema,
   assignedTo: assignedToSchema,
   dueDate: dueDateSchema,
+  position: z.number().int().positive().min(1000).max(1_000_000).optional(),
 });
 
 export const updateTaskSchema = z.object({
@@ -45,4 +46,9 @@ export const updateTaskSchema = z.object({
   status: statusSchema,
   assignedTo: assignedToSchema,
   dueDate: dueDateSchema,
+});
+
+export const updateTaskStatusSchema = z.object({
+   status: statusSchema,
+  position: z.number().int().positive().min(1000).max(1_000_000),
 });

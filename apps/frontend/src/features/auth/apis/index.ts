@@ -21,11 +21,12 @@ const loginApi = async (data: loginType): Promise<LoginResponseType> => {
 const registerApi = async (data: registerType) =>
   await API.post(apiRoutes.auth.register, data);
 
-const getCurrentUserApi =
-  async () => {
-    const response = await API.get(apiRoutes.user.current);
-    return response.data;
-  };
+const logoutApi = async () => await API.post(apiRoutes.auth.logout);
+
+const getCurrentUserApi = async () => {
+  const response = await API.get(apiRoutes.user.current);
+  return response.data;
+};
 const forgotPasswordApi = async (data: forgotPasswordType) =>
   await API.post(apiRoutes.auth.forgotPassword, data);
 
@@ -44,8 +45,6 @@ const verifyMFALoginApi = async (
   data: mfaLoginType
 ): Promise<UserResponseType> =>
   await API.post(apiRoutes.auth.mfaVerifyLogin, data);
-
-const logoutApi = async () => await API.post(apiRoutes.auth.logout);
 
 const mfaSetupApi = async (): Promise<mfaType> => {
   const response = await API.get<mfaType>(apiRoutes.auth.mfaSetup);

@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/separator";
-// import TaskTable from "@/components/workspace/task/task-table";
 import ProjectAnalytics from "@/features/projects/components/project-analytics";
 import ProjectHeader from "@/features/projects/components/project-header";
+import TaskTable from "@/features/tasks/components/task-table";
 
 const ProjectDetails = () => {
   return (
@@ -11,7 +11,7 @@ const ProjectDetails = () => {
         <ProjectAnalytics />
         <Separator />
         {/* {Task Table} */}
-        {/* <TaskTable /> */}
+        <TaskTable />
       </div>
     </div>
   );

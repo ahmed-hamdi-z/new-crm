@@ -28,4 +28,9 @@ taskRoutes.delete(
   taskController.deleteTaskHandler
 );
 
+taskRoutes.post(
+  "/workspace/:workspaceId/bulk-update",
+  taskController.bulkUpdateTaskStatusHandler
+);
+
 export default taskRoutes;

@@ -1,25 +1,16 @@
-import { useParams } from "react-router";
-import useWorkspaceId from "@/features/workspace/hooks/client/useWorkspaceId";
-import { useQuery } from "@tanstack/react-query";
-import { getProjectAnalyticsApi } from "../apis";
 import AnalyticsCard from "./analytics-card";
+import useWorkspaceId from "@/features/workspace/hooks/client/useWorkspaceId";
+import { useParams } from "react-router";
 
-
+import useGetProjectAnalytics from "../hooks/api/useGetProjectAnalytics";
 const ProjectAnalytics = () => {
   const param = useParams();
   const projectId = param.projectId as string;
 
   const workspaceId = useWorkspaceId();
+  const { data, isPending } = useGetProjectAnalytics(projectId, workspaceId);
 
-  const { data, isPending } = useQuery({
-    queryKey: ["project-analytics", projectId],
-    queryFn: () => getProjectAnalyticsApi({ workspaceId, projectId }),
-    staleTime: 0,
-    enabled: !!projectId,
-  });
-
-  const analytics = data?.analytics;
-
+  const analytics = data?.analytics?.analytics;
   return (
     <div className="grid gap-4 md:gap-5 lg:grid-cols-2 xl:grid-cols-3">
       <AnalyticsCard

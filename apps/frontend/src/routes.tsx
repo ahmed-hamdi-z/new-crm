@@ -6,6 +6,7 @@ import workspaceRoutePaths from "./features/workspace/router";
 import ProtectedRoute from "./features/auth/router/protected-route";
 import WorkspaceLayout from "./layouts/workspace-layout";
 import projectRoutePaths from "./features/projects/router";
+import tasksRoutePaths from "./features/tasks/router";
 
 const baseRoute = baseRoutePaths.map((route) => ({
   ...route,
@@ -34,10 +35,19 @@ const projectRoute = projectRoutePaths.map((route) => ({
     </WorkspaceLayout>
   ),
 }));
+const tasksRoute = tasksRoutePaths.map((route) => ({
+  ...route,
+  element: (
+    <WorkspaceLayout>
+      <ProtectedRoute>{route.element}</ProtectedRoute>
+    </WorkspaceLayout>
+  ),
+}));
 
 export const router = createBrowserRouter([
   ...baseRoute,
   ...authenticationRoute,
   ...workspaceRoute,
   ...projectRoute,
+  ...tasksRoute,
 ]);

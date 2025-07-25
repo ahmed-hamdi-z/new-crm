@@ -12,6 +12,8 @@ import {
 } from "../../common/validators/task.validator";
 import { Permissions } from "../../common/enums/role.enum";
 import { HTTPSTATUS } from "../../config/http.config";
+import { TaskStatusEnum } from "../../common/enums/task.enum";
+import { z } from "zod";
 
 export class TaskController {
   private taskService: TaskService;
@@ -123,6 +125,35 @@ export class TaskController {
     }
   );
 
+  public updateAllTasksStatusHandler = asyncHandler(
+    async (req: Request, res: Response) => {
+      const userId = req.user?._id;
+
+      const body = {
+        status: req.body.status,
+      };
+
+      const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
+
+      const { role } = await memberService.getMemberRoleInWorkspace(
+        userId,
+        workspaceId
+      );
+      RoleGuard.check(role, [Permissions.EDIT_TASK]);
+
+      const result = await this.taskService.updateAllTasksStatus(
+        body.status,
+        userId,
+        workspaceId
+      );
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: "All tasks updated successfully",
+        ...result,
+      });
+    }
+  );
+
   public getTaskByIdHandler = asyncHandler(
     async (req: Request, res: Response) => {
       const userId = req.user?._id;
@@ -166,6 +197,43 @@ export class TaskController {
 
       return res.status(HTTPSTATUS.OK).json({
         message: "Task deleted successfully",
+      });
+    }
+  );
+
+  public bulkUpdateTaskStatusHandler = asyncHandler(
+    async (req: Request, res: Response) => {
+      const userId = req.user?._id;
+      const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
+
+      const body = z
+        .object({
+          tasks: z.array(
+            z.object({
+              id: z.string(),
+              status: z.nativeEnum(TaskStatusEnum),
+              position: z.number().int().positive().min(1000).max(1_000_000),
+            })
+          ),
+        })
+        .parse(req.body);
+
+      // Verify user permissions
+      const { role } = await memberService.getMemberRoleInWorkspace(
+        userId,
+        workspaceId
+      );
+      RoleGuard.check(role, [Permissions.EDIT_TASK]);
+
+      const result = await this.taskService.bulkUpdateTaskStatus(
+        workspaceId,
+        userId,
+        body.tasks
+      );
+
+      return res.status(HTTPSTATUS.OK).json({
+        message: "Tasks updated successfully",
+        ...result,
       });
     }
   );

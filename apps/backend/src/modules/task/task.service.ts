@@ -48,6 +48,23 @@ export class TaskService {
       }
     }
 
+    // Get the highest position task for the given status and workspace
+    const highestPositionTask = await TaskModel.findOne({
+      status: status,
+      workspace: workspaceId
+    })
+    .sort({ position: -1 }) // Sort in descending order to get the highest position
+    .select('position')
+    .lean();
+
+    // Calculate the new position
+     let newPosition = 1000; // Default starting position
+    if (highestPositionTask && highestPositionTask.position >= 1000) {
+      newPosition = highestPositionTask.position + 1000;
+    } else if (highestPositionTask && highestPositionTask.position < 1000) {
+      // If somehow there's a position less than 1000, correct it
+      newPosition = 1000;
+    }
     logger.debug(`Creating new task with title: ${title}`);
     const task = new TaskModel({
       title,
@@ -59,6 +76,7 @@ export class TaskService {
       workspace: workspaceId,
       project: projectId,
       dueDate,
+      position: newPosition,
     });
 
     await task.save();
@@ -135,7 +153,9 @@ export class TaskService {
       pageNumber: number;
     }
   ) {
-    logger.info(`Fetching tasks for workspace ${workspaceId} with filters`, { filters });
+    logger.info(`Fetching tasks for workspace ${workspaceId} with filters`, {
+      filters,
+    });
 
     const query: Record<string, any> = {
       workspace: workspaceId,
@@ -176,20 +196,24 @@ export class TaskService {
     // Pagination Setup
     const { pageSize, pageNumber } = pagination;
     const skip = (pageNumber - 1) * pageSize;
-    logger.debug(`Pagination: page ${pageNumber}, size ${pageSize}, skip ${skip}`);
+    logger.debug(
+      `Pagination: page ${pageNumber}, size ${pageSize}, skip ${skip}`
+    );
 
     const [tasks, totalCount] = await Promise.all([
       TaskModel.find(query)
         .skip(skip)
         .limit(pageSize)
         .sort({ createdAt: -1 })
-        .populate("assignedTo", "_id name profilePicture -password")
+        .populate("assignedTo", "_id name profilePicture")
         .populate("project", "_id emoji name"),
       TaskModel.countDocuments(query),
     ]);
 
     const totalPages = Math.ceil(totalCount / pageSize);
-    logger.info(`Found ${totalCount} tasks, returning ${tasks.length} on page ${pageNumber} of ${totalPages}`);
+    logger.info(
+      `Found ${totalCount} tasks, returning ${tasks.length} on page ${pageNumber} of ${totalPages}`
+    );
 
     return {
       tasks,
@@ -201,6 +225,22 @@ export class TaskService {
         skip,
       },
     };
+  }
+
+  public async updateAllTasksStatus(
+    workspaceId: string,
+    projectId: string,
+    status: string
+  ) {
+    logger.info(
+      `Updating all tasks in project ${projectId} to status ${status}`
+    );
+    const tasks = await TaskModel.updateMany(
+      { workspace: workspaceId, project: projectId },
+      { status }
+    );
+    logger.info(`Updated ${tasks.modifiedCount} tasks to status ${status}`);
+    return { tasks };
   }
 
   public async getTaskById(
@@ -253,5 +293,57 @@ export class TaskService {
 
     logger.info(`Task ${taskId} deleted successfully`);
     return;
+  }
+  public async bulkUpdateTaskStatus(
+    workspaceId: string,
+    userId: string,
+    tasks: Array<{
+      id: string;
+      status: string;
+      position: number;
+    }>
+  ) {
+    logger.info(
+      `Bulk updating ${tasks.length} tasks in workspace ${workspaceId}`
+    );
+
+    // Verify all tasks belong to the same workspace
+    const taskIds = tasks.map((task) => task.id);
+    const existingTasks = await TaskModel.find({
+      _id: { $in: taskIds },
+      workspace: workspaceId,
+    });
+
+    if (existingTasks.length !== tasks.length) {
+      logger.warn(
+        `Some tasks not found or don't belong to workspace ${workspaceId}`
+      );
+      throw new NotFoundException(
+        "Some tasks not found or don't belong to this workspace"
+      );
+    }
+
+    // Prepare bulk update operations
+    const bulkOps = tasks.map((task) => ({
+      updateOne: {
+        filter: { _id: task.id, workspace: workspaceId },
+        update: {
+          $set: {
+            status: task.status,
+            position: task.position,
+            updatedBy: userId,
+          },
+        },
+      },
+    }));
+
+    // Execute bulk operation
+    const result = await TaskModel.bulkWrite(bulkOps);
+
+    logger.info(`Bulk update completed: ${result.modifiedCount} tasks updated`);
+    return {
+      updatedCount: result.modifiedCount,
+      tasks: existingTasks.map((t) => t._id),
+    };
   }
 }

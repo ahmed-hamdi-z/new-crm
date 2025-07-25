@@ -17,9 +17,11 @@ export interface TaskDocument extends Document {
   priority: TaskPriorityEnumType;
   assignedTo: mongoose.Types.ObjectId | null;
   createdBy: mongoose.Types.ObjectId;
+  updatedBy: mongoose.Types.ObjectId | null;
   dueDate: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  position: number;
 }
 
 const taskSchema = new Schema<TaskDocument>(
@@ -69,9 +71,17 @@ const taskSchema = new Schema<TaskDocument>(
       ref: "User",
       required: true,
     },
+    updatedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     dueDate: {
       type: Date,
       default: null,
+    },
+    position: {
+      type: Number,
+      default: 0,
     },
   },
   {

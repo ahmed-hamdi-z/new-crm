@@ -7,7 +7,7 @@ import {
   ProjectByIdPayloadType,
   ProjectResponseType,
 } from "../types";
-import { AnalyticsResponseType } from "@/features/workspace/types";
+import {  ProjectnalyticsResponseType } from "@/features/workspace/types";
 
 const createProjectApi = async ({
   workspaceId,
@@ -56,7 +56,7 @@ const getProjectByIdApi = async ({
 const getProjectAnalyticsApi = async ({
   workspaceId,
   projectId,
-}: ProjectByIdPayloadType): Promise<AnalyticsResponseType> => {
+}: ProjectByIdPayloadType): Promise<ProjectnalyticsResponseType> => {
   const response = await API.get(
     `/api/project/${projectId}/workspace/${workspaceId}/analytics`
   );

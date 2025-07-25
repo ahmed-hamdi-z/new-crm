@@ -13,7 +13,7 @@ import {
   IconMoon,
   IconSystem,
 } from "@/assets/icons/header-icons";
-import UserDropdown from "@/components/header/user-button";
+import { UserButton } from "@/components/header/user-button";
 import useWorkspaceId from "@/features/workspace/hooks/client/useWorkspaceId";
 import SidebarGroupButtons from "@/components/sidebar/sidebar-buttons";
 import {
@@ -37,8 +37,7 @@ const Header = () => {
     queryClient.getQueryData<TogglesStateProps>([TOGGLES_KEY]) ||
     DEFAULT_TOGGLES;
 
-  const { rtlClass, theme, isDarkMode, menu } = toggles;
-  const isRtl = rtlClass === "rtl";
+  const { theme, isDarkMode, menu } = toggles;
 
   useEffect(() => {
     const selector = document.querySelector(
@@ -152,7 +151,7 @@ const Header = () => {
             </div>
 
             {/* User Dropdown */}
-            <UserDropdown isRtl={isRtl} />
+            <UserButton />
           </div>
         </div>
 

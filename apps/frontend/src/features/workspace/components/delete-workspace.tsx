@@ -40,7 +40,7 @@ const DeleteWorkspaceCard = () => {
               </p>
             </div>
             <Button
-              className="shrink-0 flex place-self-end h-[40px]"
+              className="shrink-0 flex place-self-end h-[40px] bg-slate-800 hover:bg-slate-700 text-white rounded-md px-4 py-2"
               variant="destructive"
               onClick={onOpenDialog}
             >

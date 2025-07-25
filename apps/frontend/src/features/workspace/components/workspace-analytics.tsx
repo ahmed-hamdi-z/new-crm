@@ -2,14 +2,13 @@ import useWorkspaceId from "../hooks/client/useWorkspaceId";
 import AnalyticsCard from "./analytics-card";
 import useGetWorkspaceAnalytics from "../hooks/api/useGetWorkspaceAnalytics";
 
-
 const WorkspaceAnalytics = () => {
   const workspaceId = useWorkspaceId();
 
   const { data, isPending } = useGetWorkspaceAnalytics(workspaceId);
 
   const analytics = data?.analytics;
-
+  console.log(analytics, "analytics");
   return (
     <div className="grid gap-4 md:gap-5 lg:grid-cols-2 xl:grid-cols-3">
       <AnalyticsCard

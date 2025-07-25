@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RecentProjects from "@/features/projects/components/recent-projects";
 import useCreateProjectDialog from "@/features/projects/hooks/client/useCreateProjectDialog";
+import RecentTasks from "@/features/tasks/components/recent-tasks";
 import RecentMembers from "@/features/workspace/components/recent-members";
 import WorkspaceAnalytics from "@/features/workspace/components/workspace-analytics";
 import { Plus } from "lucide-react";
@@ -42,7 +43,7 @@ const WorkspaceDashboard: React.FC = () => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="projects"><RecentProjects /></TabsContent>
-          <TabsContent value="tasks">{/* <RecentTasks /> */}</TabsContent>
+          <TabsContent value="tasks"><RecentTasks /></TabsContent>
           <TabsContent value="members"><RecentMembers /></TabsContent>
         </Tabs>
       </div>

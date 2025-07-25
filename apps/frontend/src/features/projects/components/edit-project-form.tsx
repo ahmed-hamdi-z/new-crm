@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -17,16 +16,16 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 import { Loader } from "lucide-react";
 import { ProjectType } from "../types";
 import useWorkspaceId from "@/features/workspace/hooks/client/useWorkspaceId";
-import { editProjectApi } from "../apis";
-import { toast } from "sonner";
 import EmojiPickerComponent from "./emoji-picker";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  editProjectSchema,
+  editProjectSchemaFormValue,
+} from "../types/validator";
+import useEditProjectForm from "../hooks/api/useEditProject";
 
 export default function EditProjectForm(props: {
   project?: ProjectType;
@@ -34,25 +33,15 @@ export default function EditProjectForm(props: {
 }) {
   const { project, onClose } = props;
   const workspaceId = useWorkspaceId();
-  const queryClient = useQueryClient();
 
   const [emoji, setEmoji] = useState("📊");
 
   const projectId = project?._id as string;
 
-  const formSchema = z.object({
-    name: z.string().trim().min(1, {
-      message: "Project title is required",
-    }),
-    description: z.string().trim(),
-  });
+  const { mutate, isPending } = useEditProjectForm({ onClose }, projectId);
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: editProjectApi,
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<editProjectSchemaFormValue>({
+    resolver: zodResolver(editProjectSchema),
     defaultValues: {
       name: "",
       description: "",
@@ -71,31 +60,14 @@ export default function EditProjectForm(props: {
     setEmoji(emoji);
   };
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: editProjectSchemaFormValue) => {
     if (isPending) return;
     const payload = {
       projectId,
       workspaceId,
       data: { emoji, ...values },
     };
-    mutate(payload, {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries({
-          queryKey: ["singleProject", projectId],
-        });
-
-        queryClient.invalidateQueries({
-          queryKey: ["allprojects", workspaceId],
-        });
-
-        toast.success(data?.message || "Project updated successfully");
-
-        setTimeout(() => onClose(), 100);
-      },
-      onError: (error) => {
-        toast.error(error.message || "Failed to update project");
-      },
-    });
+    mutate(payload, {});
   };
 
   return (
