@@ -20,12 +20,13 @@ import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import EditTask from "../edit-task";
 
 interface DataTableRowActionsProps {
-  row: Row<TaskType>;
+  row?: Row<TaskType>;
+  tasks?: TaskType;
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const [openDeleteDialog, setOpenDialog] = useState(false);
-  const [openEditDialog, setOpenEditDialog] = useState(false); // State for edit dialog
+  const [openEditDialog, setOpenEditDialog] = useState(false); 
 
   const queryClient = useQueryClient();
   const workspaceId = useWorkspaceId();
@@ -34,9 +35,9 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     mutationFn: deleteTaskApi,
   });
 
-  const task = row.original;
-  const taskId = task._id as string;
-  const taskCode = task.taskCode;
+  const task = row?.original;
+  const taskId = task?._id as string;
+  const taskCode = task?.taskCode;
 
   const handleConfirm = () => {
     mutate(
@@ -63,16 +64,16 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[160px]">
+        <DropdownMenuContent align="end" className="w-[160px] bg-white">
           {/* Edit Task Option */}
-          <DropdownMenuItem className="cursor-pointer" onClick={() => setOpenEditDialog(true)}>
+          <DropdownMenuItem className="cursor-pointer hover:bg-neutral-200" onClick={() => setOpenEditDialog(true)}>
             <Pencil className="w-4 h-4 mr-2" /> Edit Task
           </DropdownMenuItem>
           <DropdownMenuSeparator />
 
           {/* Delete Task Option */}
           <DropdownMenuItem
-            className="!text-destructive cursor-pointer"
+            className="!text-destructive cursor-pointer hover:bg-neutral-200"
             onClick={() => setOpenDialog(true)}
           >
             Delete Task
@@ -82,7 +83,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
       </DropdownMenu>
 
       {/* Edit Task Dialog */}
-      <EditTask task={task} isOpen={openEditDialog} onClose={() => setOpenEditDialog(false)} />
+      <EditTask task={task as TaskType} isOpen={openEditDialog} onClose={() => setOpenEditDialog(false)} />
 
       {/* Delete Task Confirmation Dialog */}
       <ConfirmDialog

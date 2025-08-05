@@ -42,9 +42,15 @@ const WorkspaceDashboard: React.FC = () => {
               Recent Members
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="projects"><RecentProjects /></TabsContent>
-          <TabsContent value="tasks"><RecentTasks /></TabsContent>
-          <TabsContent value="members"><RecentMembers /></TabsContent>
+          <TabsContent value="projects">
+            <RecentProjects />
+          </TabsContent>
+          <TabsContent value="tasks">
+            <RecentTasks />
+          </TabsContent>
+          <TabsContent value="members">
+            <RecentMembers />
+          </TabsContent>
         </Tabs>
       </div>
       {/* <EnableMfa />
@@ -52,6 +58,5 @@ const WorkspaceDashboard: React.FC = () => {
     </main>
   );
 };
-
 
 export default WorkspaceDashboard;

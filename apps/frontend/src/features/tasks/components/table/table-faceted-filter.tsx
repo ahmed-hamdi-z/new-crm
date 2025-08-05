@@ -8,7 +8,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
@@ -30,8 +29,8 @@ interface DataTableFacetedFilterProps {
   }[];
   disabled?: boolean;
   multiSelect?: boolean;
-  selectedValues?: string[]; // New prop
-  onFilterChange: (values: string[]) => void; // New callback prop
+  selectedValues?: string[];
+  onFilterChange: (values: string[]) => void;
 }
 
 export function DataTableFacetedFilter({
@@ -57,7 +56,7 @@ export function DataTableFacetedFilter({
           disabled={disabled}
           variant="outline"
           size="sm"
-          className="h-8 border-dashed w-full lg:w-auto"
+          className="h-8 w-full lg:w-auto justify-center text-left font-normal"
         >
           <PlusCircle />
           {title}
@@ -70,7 +69,7 @@ export function DataTableFacetedFilter({
               >
                 {selectedValueSet.size}
               </Badge>
-              <div className="hidden space-x-1 lg:flex">
+              <div className="hidden space-x-1 lg:flex ">
                 {selectedValueSet.size > 1 ? (
                   <Badge
                     variant="secondary"
@@ -85,7 +84,7 @@ export function DataTableFacetedFilter({
                       <Badge
                         variant="secondary"
                         key={option.value}
-                        className="rounded-sm px-1 font-normal"
+                        className="rounded-sm px-1 font-normal "
                       >
                         {option.label}
                       </Badge>
@@ -96,9 +95,8 @@ export function DataTableFacetedFilter({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0" align="start">
+      <PopoverContent className="w-[200px] p-0 bg-white" align="start">
         <Command>
-          <CommandInput placeholder={`Filter ${title}`} />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
@@ -106,13 +104,13 @@ export function DataTableFacetedFilter({
                 const isSelected = selectedValueSet.has(option.value);
                 return (
                   <CommandItem
-                    className={`cursor-pointer`}
+                    className={`cursor-pointer hover:bg-neutral-200`}
                     key={option.value}
                     onSelect={() => {
                       if (multiSelect) {
                         const updatedValues = isSelected
                           ? selectedValues.filter((val) => val !== option.value) // Remove value
-                          : [...selectedValues, option.value]; // Add value
+                          : [...selectedValues, option.value];
                         onFilterChange(updatedValues);
                       } else {
                         onFilterChange(isSelected ? [] : [option.value]); // Single select
@@ -146,7 +144,7 @@ export function DataTableFacetedFilter({
                 <CommandGroup className="sticky bottom-0 align-bottom bg-white">
                   <CommandItem
                     onSelect={() => onFilterChange([])} // Clear all filters
-                    className="justify-center text-center"
+                    className="justify-center text-center "
                   >
                     Clear filters
                   </CommandItem>

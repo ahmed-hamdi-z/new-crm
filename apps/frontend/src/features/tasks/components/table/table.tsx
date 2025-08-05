@@ -87,16 +87,16 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="w-full space-y-2">
+    <div className="w-full space-y-2 ">
       <div className="block w-full lg:flex lg:items-center lg:justify-between">
         {filtersToolbar && <div className="flex-1"> {filtersToolbar}</div>}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto w-full lg:w-auto">
+          <DropdownMenuTrigger className="" asChild>
+            <Button variant="outline" className="ml-auto w-full lg:w-auto ">
               Columns <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent className="bg-white " align="end">
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
@@ -104,10 +104,10 @@ export function DataTable<TData, TValue>({
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
-                    className="capitalize"
+                    className="capitalize hover:bg-neutral-200 dark:hover:bg-neutral-200"
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
+                    column.toggleVisibility(!!value)
                     }
                   >
                     {column.id}

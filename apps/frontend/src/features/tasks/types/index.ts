@@ -108,19 +108,3 @@ export enum TaskStatus {
   DONE = "DONE",
 }
 
-export type Task = Document & {
-  _id: string;
-  title: string;
-  status: TaskStatus;
-  workspaceId: string;
-  assignedTo: string;
-  projectId: string;
-  position: number;
-  dueDate: string;
-  description: string;
-   project?: {
-    _id: string;
-    emoji: string;
-    name: string;
-  };
-};

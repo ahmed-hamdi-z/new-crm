@@ -7,12 +7,8 @@ import {
   CircleIcon,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { TaskStatusEnum, TaskStatusEnumType } from "../../types";
 import { snakeCaseToTitleCase } from "@/lib/utils";
-import CreateTask from "../create-task";
-
-
 
 interface KanbanColumnHeaderProps {
   board: TaskStatusEnumType;
@@ -51,9 +47,7 @@ export const KanbanColumnHeader = ({
           {taskCount}
         </div>
       </div>
-      <Button className="size-5 bg-transparent text-neutral-500" variant="ghost" size="icon">
-        <CreateTask />
-      </Button>
+  
     </div>
   );
 };

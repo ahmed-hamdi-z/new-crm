@@ -28,10 +28,9 @@ authRoutes.get(
   "/google/callback",
   passport.authenticate("google", {
     failureRedirect: failedUrl,
-    session: false, // Keep this false since you're using JWT
+    session: false, 
   }),
   (req, res, next) => {
-    // This middleware attaches the tokens to the redirect URL if needed
     const { accessToken, refreshToken, mfaRequired } = req.user as any;
     
     if (mfaRequired) {
@@ -40,7 +39,6 @@ authRoutes.get(
       );
     }
 
-    // You can either set cookies here or in the callbackHandler
     setAuthenticationCookies({
       res,
       accessToken,

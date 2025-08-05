@@ -256,7 +256,7 @@ export default function CreateTaskForm(props: {
                           )}
                           <div
                             className="w-full max-h-[200px]
-                           overflow-y-auto scrollbar
+                           overflow-y-auto scrollbar bg-white
                           "
                           >
                             {projectOptions?.map((option) => (
@@ -299,7 +299,7 @@ export default function CreateTaskForm(props: {
                       <SelectContent>
                         <div
                           className="w-full max-h-[200px]
-                           overflow-y-auto scrollbar
+                           overflow-y-auto scrollbar bg-white
                           "
                         >
                           {membersOptions?.map((option) => (
@@ -347,7 +347,7 @@ export default function CreateTaskForm(props: {
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
+                      <PopoverContent className="w-auto p-0 bg-white" align="start">
                         <Calendar
                           mode="single"
                           selected={field.value}
@@ -386,12 +386,12 @@ export default function CreateTaskForm(props: {
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue
-                            className="!text-muted-foreground !capitalize"
+                            className="!text-muted-foreground !capitalize bg-white"
                             placeholder="Select a status"
                           />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-white">
                         {statusOptions?.map((status) => (
                           <SelectItem
                             className="!capitalize"
@@ -429,7 +429,7 @@ export default function CreateTaskForm(props: {
                       <SelectContent>
                         {priorityOptions?.map((priority) => (
                           <SelectItem
-                            className="!capitalize"
+                            className="!capitalize bg-white"
                             key={priority.value}
                             value={priority.value}
                           >

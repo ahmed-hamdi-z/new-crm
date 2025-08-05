@@ -63,7 +63,7 @@ export const DataFilters = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full items-start space-y-2 mb-2 lg:mb-0 lg:space-x-2  lg:space-y-0">
+    <div className="flex flex-col lg:flex-row w-full items-start space-y-2 mb-2 lg:mb-0 lg:space-x-2  lg:space-y-0 ">
       <Input
         placeholder="Filter tasks..."
         value={filters.keyword || ""}

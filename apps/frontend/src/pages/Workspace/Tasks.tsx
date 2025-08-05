@@ -17,10 +17,6 @@ export default function Tasks() {
       <div>
        <TaskViewSwitcher />
       </div>
-      {/* {Task Table} */}
-      {/* <div>
-        <TaskTable />
-      </div> */}
     </div>
   );
 }

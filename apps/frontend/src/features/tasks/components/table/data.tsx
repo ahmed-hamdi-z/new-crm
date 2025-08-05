@@ -8,15 +8,15 @@ import {
   Timer,
   View,
 } from "lucide-react";
-import { TaskPriorityEnum, TaskStatusEnum } from "../../types";
+import { TaskPriorityEnum, TaskStatus } from "../../types";
 import { transformOptions } from "@/config/helpers";
 
 const statusIcons = {
-  [TaskStatusEnum.BACKLOG]: HelpCircle,
-  [TaskStatusEnum.TODO]: Circle,
-  [TaskStatusEnum.IN_PROGRESS]: Timer,
-  [TaskStatusEnum.IN_REVIEW]: View,
-  [TaskStatusEnum.DONE]: CheckCircle,
+  [TaskStatus.BACKLOG]: HelpCircle,
+  [TaskStatus.TODO]: Circle,
+  [TaskStatus.IN_PROGRESS]: Timer,
+  [TaskStatus.IN_REVIEW]: View,
+  [TaskStatus.DONE]: CheckCircle,
 };
 
 const priorityIcons = {
@@ -26,7 +26,7 @@ const priorityIcons = {
 };
 
 export const statuses = transformOptions(
-  Object.values(TaskStatusEnum),
+  Object.values(TaskStatus),
   statusIcons
 );
 

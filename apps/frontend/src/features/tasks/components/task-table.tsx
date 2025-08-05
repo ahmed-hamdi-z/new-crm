@@ -59,7 +59,6 @@ const TaskTable = () => {
     setPageNumber(page);
   };
 
-  // Handle page size changes
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
   };

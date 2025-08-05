@@ -14,7 +14,7 @@ const CreateTask = (props: { projectId?: string, newTask?: string }) => {
     <div>
       <Dialog modal={true} open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger>
-          <Button className=" bg-transparent hover:bg-neutral-400">
+          <Button className="text-black bg-transparent hover:bg-neutral-400">
             <Plus />
             {props.newTask}
           </Button>

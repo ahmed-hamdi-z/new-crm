@@ -60,12 +60,12 @@ export function DataTablePagination<TData>({
             value={`${pageSize}`}
             onValueChange={(value) => handlePageSizeChange(Number(value))}
           >
-            <SelectTrigger className="h-8 w-[70px]">
+            <SelectTrigger className="h-8 w-[70px] ">
               <SelectValue placeholder={`${pageSize}`} />
             </SelectTrigger>
-            <SelectContent side="top">
+            <SelectContent side="top" className="bg-white ">
               {[10, 20, 30, 40, 50].map((size) => (
-                <SelectItem key={size} value={`${size}`}>
+                <SelectItem className="hover:bg-neutral-200" key={size} value={`${size}`}>
                   {size}
                 </SelectItem>
               ))}
